@@ -45,7 +45,7 @@ func main() {
 
 	// /api/v1/asu/watcher
 	router.GET("/api/v1/asu/watcher", getWatchedClasses)
-	router.POST("/api/v1/asu/watcher", postAlbums)
+	router.POST("/api/v1/asu/watcher", postWatchedClass)
 
 	// /api/v1/asu/watcher/:id
 	router.GET("/api/v1/asu/watcher/:id", getWatchedClassByID)
@@ -57,7 +57,7 @@ func getWatchedClasses(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, classes)
 }
 
-func postAlbums(c *gin.Context) {
+func postWatchedClass(c *gin.Context) {
 	var newClass class
 
 	// Call BindJSON to bind the received JSON to
