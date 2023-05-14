@@ -1,0 +1,15 @@
+# General
+/.idea
+/.vscode
+.DS_Store
+*.pem
+
+# Production
+/target
+/build
+
+# Protecting Secrets
+.env
+.env.*local
+.env.*production
+
