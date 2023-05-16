@@ -8,6 +8,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -27,30 +28,67 @@ func (awcu *ASUWatchedClassUpdate) Where(ps ...predicate.ASU_Watched_Class) *ASU
 	return awcu
 }
 
-// SetAge sets the "age" field.
-func (awcu *ASUWatchedClassUpdate) SetAge(i int) *ASUWatchedClassUpdate {
-	awcu.mutation.ResetAge()
-	awcu.mutation.SetAge(i)
+// SetTitle sets the "title" field.
+func (awcu *ASUWatchedClassUpdate) SetTitle(s string) *ASUWatchedClassUpdate {
+	awcu.mutation.SetTitle(s)
 	return awcu
 }
 
-// AddAge adds i to the "age" field.
-func (awcu *ASUWatchedClassUpdate) AddAge(i int) *ASUWatchedClassUpdate {
-	awcu.mutation.AddAge(i)
+// SetInstructor sets the "instructor" field.
+func (awcu *ASUWatchedClassUpdate) SetInstructor(s string) *ASUWatchedClassUpdate {
+	awcu.mutation.SetInstructor(s)
 	return awcu
 }
 
-// SetName sets the "name" field.
-func (awcu *ASUWatchedClassUpdate) SetName(s string) *ASUWatchedClassUpdate {
-	awcu.mutation.SetName(s)
+// SetSubject sets the "subject" field.
+func (awcu *ASUWatchedClassUpdate) SetSubject(s string) *ASUWatchedClassUpdate {
+	awcu.mutation.SetSubject(s)
 	return awcu
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (awcu *ASUWatchedClassUpdate) SetNillableName(s *string) *ASUWatchedClassUpdate {
-	if s != nil {
-		awcu.SetName(*s)
+// SetSubjectNumber sets the "subject_number" field.
+func (awcu *ASUWatchedClassUpdate) SetSubjectNumber(s string) *ASUWatchedClassUpdate {
+	awcu.mutation.SetSubjectNumber(s)
+	return awcu
+}
+
+// SetHasOpenSeats sets the "has_open_seats" field.
+func (awcu *ASUWatchedClassUpdate) SetHasOpenSeats(b bool) *ASUWatchedClassUpdate {
+	awcu.mutation.SetHasOpenSeats(b)
+	return awcu
+}
+
+// SetNillableHasOpenSeats sets the "has_open_seats" field if the given value is not nil.
+func (awcu *ASUWatchedClassUpdate) SetNillableHasOpenSeats(b *bool) *ASUWatchedClassUpdate {
+	if b != nil {
+		awcu.SetHasOpenSeats(*b)
 	}
+	return awcu
+}
+
+// SetTrackedAt sets the "tracked_at" field.
+func (awcu *ASUWatchedClassUpdate) SetTrackedAt(t time.Time) *ASUWatchedClassUpdate {
+	awcu.mutation.SetTrackedAt(t)
+	return awcu
+}
+
+// SetNillableTrackedAt sets the "tracked_at" field if the given value is not nil.
+func (awcu *ASUWatchedClassUpdate) SetNillableTrackedAt(t *time.Time) *ASUWatchedClassUpdate {
+	if t != nil {
+		awcu.SetTrackedAt(*t)
+	}
+	return awcu
+}
+
+// SetClassNumber sets the "class_number" field.
+func (awcu *ASUWatchedClassUpdate) SetClassNumber(s string) *ASUWatchedClassUpdate {
+	awcu.mutation.SetClassNumber(s)
+	return awcu
+}
+
+// SetTerm sets the "term" field.
+func (awcu *ASUWatchedClassUpdate) SetTerm(s string) *ASUWatchedClassUpdate {
+	awcu.mutation.SetTerm(s)
 	return awcu
 }
 
@@ -86,20 +124,7 @@ func (awcu *ASUWatchedClassUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (awcu *ASUWatchedClassUpdate) check() error {
-	if v, ok := awcu.mutation.Age(); ok {
-		if err := asu_watched_class.AgeValidator(v); err != nil {
-			return &ValidationError{Name: "age", err: fmt.Errorf(`ent: validator failed for field "ASU_Watched_Class.age": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (awcu *ASUWatchedClassUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := awcu.check(); err != nil {
-		return n, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(asu_watched_class.Table, asu_watched_class.Columns, sqlgraph.NewFieldSpec(asu_watched_class.FieldID, field.TypeInt))
 	if ps := awcu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -108,14 +133,29 @@ func (awcu *ASUWatchedClassUpdate) sqlSave(ctx context.Context) (n int, err erro
 			}
 		}
 	}
-	if value, ok := awcu.mutation.Age(); ok {
-		_spec.SetField(asu_watched_class.FieldAge, field.TypeInt, value)
+	if value, ok := awcu.mutation.Title(); ok {
+		_spec.SetField(asu_watched_class.FieldTitle, field.TypeString, value)
 	}
-	if value, ok := awcu.mutation.AddedAge(); ok {
-		_spec.AddField(asu_watched_class.FieldAge, field.TypeInt, value)
+	if value, ok := awcu.mutation.Instructor(); ok {
+		_spec.SetField(asu_watched_class.FieldInstructor, field.TypeString, value)
 	}
-	if value, ok := awcu.mutation.Name(); ok {
-		_spec.SetField(asu_watched_class.FieldName, field.TypeString, value)
+	if value, ok := awcu.mutation.Subject(); ok {
+		_spec.SetField(asu_watched_class.FieldSubject, field.TypeString, value)
+	}
+	if value, ok := awcu.mutation.SubjectNumber(); ok {
+		_spec.SetField(asu_watched_class.FieldSubjectNumber, field.TypeString, value)
+	}
+	if value, ok := awcu.mutation.HasOpenSeats(); ok {
+		_spec.SetField(asu_watched_class.FieldHasOpenSeats, field.TypeBool, value)
+	}
+	if value, ok := awcu.mutation.TrackedAt(); ok {
+		_spec.SetField(asu_watched_class.FieldTrackedAt, field.TypeTime, value)
+	}
+	if value, ok := awcu.mutation.ClassNumber(); ok {
+		_spec.SetField(asu_watched_class.FieldClassNumber, field.TypeString, value)
+	}
+	if value, ok := awcu.mutation.Term(); ok {
+		_spec.SetField(asu_watched_class.FieldTerm, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, awcu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -137,30 +177,67 @@ type ASUWatchedClassUpdateOne struct {
 	mutation *ASUWatchedClassMutation
 }
 
-// SetAge sets the "age" field.
-func (awcuo *ASUWatchedClassUpdateOne) SetAge(i int) *ASUWatchedClassUpdateOne {
-	awcuo.mutation.ResetAge()
-	awcuo.mutation.SetAge(i)
+// SetTitle sets the "title" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetTitle(s string) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetTitle(s)
 	return awcuo
 }
 
-// AddAge adds i to the "age" field.
-func (awcuo *ASUWatchedClassUpdateOne) AddAge(i int) *ASUWatchedClassUpdateOne {
-	awcuo.mutation.AddAge(i)
+// SetInstructor sets the "instructor" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetInstructor(s string) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetInstructor(s)
 	return awcuo
 }
 
-// SetName sets the "name" field.
-func (awcuo *ASUWatchedClassUpdateOne) SetName(s string) *ASUWatchedClassUpdateOne {
-	awcuo.mutation.SetName(s)
+// SetSubject sets the "subject" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetSubject(s string) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetSubject(s)
 	return awcuo
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (awcuo *ASUWatchedClassUpdateOne) SetNillableName(s *string) *ASUWatchedClassUpdateOne {
-	if s != nil {
-		awcuo.SetName(*s)
+// SetSubjectNumber sets the "subject_number" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetSubjectNumber(s string) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetSubjectNumber(s)
+	return awcuo
+}
+
+// SetHasOpenSeats sets the "has_open_seats" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetHasOpenSeats(b bool) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetHasOpenSeats(b)
+	return awcuo
+}
+
+// SetNillableHasOpenSeats sets the "has_open_seats" field if the given value is not nil.
+func (awcuo *ASUWatchedClassUpdateOne) SetNillableHasOpenSeats(b *bool) *ASUWatchedClassUpdateOne {
+	if b != nil {
+		awcuo.SetHasOpenSeats(*b)
 	}
+	return awcuo
+}
+
+// SetTrackedAt sets the "tracked_at" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetTrackedAt(t time.Time) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetTrackedAt(t)
+	return awcuo
+}
+
+// SetNillableTrackedAt sets the "tracked_at" field if the given value is not nil.
+func (awcuo *ASUWatchedClassUpdateOne) SetNillableTrackedAt(t *time.Time) *ASUWatchedClassUpdateOne {
+	if t != nil {
+		awcuo.SetTrackedAt(*t)
+	}
+	return awcuo
+}
+
+// SetClassNumber sets the "class_number" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetClassNumber(s string) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetClassNumber(s)
+	return awcuo
+}
+
+// SetTerm sets the "term" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetTerm(s string) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetTerm(s)
 	return awcuo
 }
 
@@ -209,20 +286,7 @@ func (awcuo *ASUWatchedClassUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (awcuo *ASUWatchedClassUpdateOne) check() error {
-	if v, ok := awcuo.mutation.Age(); ok {
-		if err := asu_watched_class.AgeValidator(v); err != nil {
-			return &ValidationError{Name: "age", err: fmt.Errorf(`ent: validator failed for field "ASU_Watched_Class.age": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (awcuo *ASUWatchedClassUpdateOne) sqlSave(ctx context.Context) (_node *ASU_Watched_Class, err error) {
-	if err := awcuo.check(); err != nil {
-		return _node, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(asu_watched_class.Table, asu_watched_class.Columns, sqlgraph.NewFieldSpec(asu_watched_class.FieldID, field.TypeInt))
 	id, ok := awcuo.mutation.ID()
 	if !ok {
@@ -248,14 +312,29 @@ func (awcuo *ASUWatchedClassUpdateOne) sqlSave(ctx context.Context) (_node *ASU_
 			}
 		}
 	}
-	if value, ok := awcuo.mutation.Age(); ok {
-		_spec.SetField(asu_watched_class.FieldAge, field.TypeInt, value)
+	if value, ok := awcuo.mutation.Title(); ok {
+		_spec.SetField(asu_watched_class.FieldTitle, field.TypeString, value)
 	}
-	if value, ok := awcuo.mutation.AddedAge(); ok {
-		_spec.AddField(asu_watched_class.FieldAge, field.TypeInt, value)
+	if value, ok := awcuo.mutation.Instructor(); ok {
+		_spec.SetField(asu_watched_class.FieldInstructor, field.TypeString, value)
 	}
-	if value, ok := awcuo.mutation.Name(); ok {
-		_spec.SetField(asu_watched_class.FieldName, field.TypeString, value)
+	if value, ok := awcuo.mutation.Subject(); ok {
+		_spec.SetField(asu_watched_class.FieldSubject, field.TypeString, value)
+	}
+	if value, ok := awcuo.mutation.SubjectNumber(); ok {
+		_spec.SetField(asu_watched_class.FieldSubjectNumber, field.TypeString, value)
+	}
+	if value, ok := awcuo.mutation.HasOpenSeats(); ok {
+		_spec.SetField(asu_watched_class.FieldHasOpenSeats, field.TypeBool, value)
+	}
+	if value, ok := awcuo.mutation.TrackedAt(); ok {
+		_spec.SetField(asu_watched_class.FieldTrackedAt, field.TypeTime, value)
+	}
+	if value, ok := awcuo.mutation.ClassNumber(); ok {
+		_spec.SetField(asu_watched_class.FieldClassNumber, field.TypeString, value)
+	}
+	if value, ok := awcuo.mutation.Term(); ok {
+		_spec.SetField(asu_watched_class.FieldTerm, field.TypeString, value)
 	}
 	_node = &ASU_Watched_Class{config: awcuo.config}
 	_spec.Assign = _node.assignValues

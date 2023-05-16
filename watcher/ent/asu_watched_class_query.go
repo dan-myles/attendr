@@ -261,12 +261,12 @@ func (awcq *ASUWatchedClassQuery) Clone() *ASUWatchedClassQuery {
 // Example:
 //
 //	var v []struct {
-//		Age int `json:"age,omitempty"`
+//		Title string `json:"title,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ASUWatchedClass.Query().
-//		GroupBy(asu_watched_class.FieldAge).
+//		GroupBy(asu_watched_class.FieldTitle).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (awcq *ASUWatchedClassQuery) GroupBy(field string, fields ...string) *ASUWatchedClassGroupBy {
@@ -284,11 +284,11 @@ func (awcq *ASUWatchedClassQuery) GroupBy(field string, fields ...string) *ASUWa
 // Example:
 //
 //	var v []struct {
-//		Age int `json:"age,omitempty"`
+//		Title string `json:"title,omitempty"`
 //	}
 //
 //	client.ASUWatchedClass.Query().
-//		Select(asu_watched_class.FieldAge).
+//		Select(asu_watched_class.FieldTitle).
 //		Scan(ctx, &v)
 func (awcq *ASUWatchedClassQuery) Select(fields ...string) *ASUWatchedClassSelect {
 	awcq.ctx.Fields = append(awcq.ctx.Fields, fields...)

@@ -1,11 +1,7 @@
 /*
-* TODO:
-* Currently the ClassQueue is emptied after execution of go routines
-* So is the sentinelQueue. ClassQueue may be added to while the checking
-* classes in senQ, via REST API (NOT IMPLEMENTED YET).
-*
-* - Add classes back to classQ if they are not open (SORT OF HANDLED?)
-* - Handle finding an open class
+* TODO: handle adding multiple duplicate classes to the queue
+* Currently they won't get added, but API returns success
+* Need some sort of new DB table of users watching specific classes
 **/
 
 package sentinel
@@ -30,6 +26,9 @@ import (
 * ASU Watched Class Wrapper
 * Since we don't need *all* the information a class has in the DB,
 * to be able to check if it open. We can pull the data we __do__ need.
+* This will save on memory and increased performance by 1.3x-1.5x
+* Internally we will work with Wrappers, however externally we work with
+* the ASU_API_Response struct.
 **/
 type ASUWC_Wrapper struct {
 	ClassNumber string
@@ -43,25 +42,45 @@ type ASUWC_Wrapper struct {
 // to check if a class is open. It will be a fixed size for faster
 // read and writes from a concurrent queue.
 var (
-	ClassQueue    = goconcurrentqueue.NewFIFO()
-	apiURL        string
-	rateLimit     int
-	watchInterval int
+	ClassQueue          = goconcurrentqueue.NewFIFO()
+	scraping       bool = false
+	apiURL         string
+	externalApiURL string
+	rateLimit      int
+	watchInterval  int
 )
 
 // Exported Function to add a class to the queue
-func AddClass(class ASUWC_Wrapper) error {
+func AddClass(class ASUWC_Wrapper) (string, error) {
+	for scraping {
+		time.Sleep(1 * time.Second)
+		log.Logger.Debug("Waiting for scraping to finish before adding class to queue...")
+	}
+
+	// check if class exists
+	classes := GetWatchedClasses()
+	for _, c := range classes {
+		if c.ClassNumber == class.ClassNumber {
+			return "Class is already in queue, added user to watchers", nil
+		}
+	}
+
 	err := ClassQueue.Enqueue(class)
 	if err != nil {
-		return errors.New("Error adding class to queue")
+		return "Error adding class to queue!", errors.New("Error adding class to queue")
 	}
+
 	log.Logger.Debug("Added class to ClassQueue:\n", "class", class)
 
-	return nil
+	return "Class added to queue, added user to watchers", nil
 }
 
 // Exported Function to start the sentinel
-func Start(ch chan bool) {
+func Start(wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	AddClass(ASUWC_Wrapper{ClassNumber: "88655", Term: "2237", OpenSeats: 0})
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Logger.Fatal("Error loading .env file")
@@ -70,30 +89,23 @@ func Start(ch chan bool) {
 	rateLimit, _ = strconv.Atoi(os.Getenv("RATE_LIMIT"))
 	watchInterval, _ = strconv.Atoi(os.Getenv("WATCH_INTERVAL"))
 	apiURL = os.Getenv("TEST_API_URL")
-	// apiURL = os.Getenv("ASU_API_URL")
 
-	AddClass(ASUWC_Wrapper{ClassNumber: "88655", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "78065", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "88655", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "78065", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "88655", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "94320", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "93667", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "94320", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "78065", Term: "2237", OpenSeats: 0})
-	AddClass(ASUWC_Wrapper{ClassNumber: "93667", Term: "2237", OpenSeats: 0})
+	for {
+		log.Logger.Info("Starting sentinel...")
 
-	log.Logger.Info("Starting sentinel...")
-	startWatching()
+		for ClassQueue.IsLocked() {
+			log.Logger.Debug("ClassQueue is locked, waiting...")
+			time.Sleep(1 * time.Second)
+		}
 
-	// for {
-	// 	log.Logger.Info("Starting sentinel...")
-	// 	startWatching()
-	// 	log.Logger.Info("Checking again after WATCH_INTERVAL minutes...",
-	// 		"WATCH_INTERVAL", watchInterval)
-	// 	time.Sleep(time.Duration(watchInterval) * time.Second)
-	// }
-	ch <- true
+		scraping = true
+		startWatching()
+		scraping = false
+
+		log.Logger.Info("Checking again after WATCH_INTERVAL minutes...",
+			"WATCH_INTERVAL", watchInterval)
+		time.Sleep(time.Duration(watchInterval) * time.Second)
+	}
 }
 
 // Internal Function to start watching classes
@@ -107,6 +119,12 @@ func startWatching() {
 	log.Logger.Debug("Class Queue Length:", "len", ClassQueue.GetLen())
 
 	sentinelQueue := goconcurrentqueue.NewFixedFIFO(ClassQueue.GetLen())
+
+	// Wait until it is unlocked
+	for ClassQueue.IsLocked() {
+		log.Logger.Debug("ClassQueue is locked while transferring, waiting...")
+		time.Sleep(1 * time.Second)
+	}
 
 	// Move all classes from ClassQueue to sentinelQueue
 	classQueueLen := ClassQueue.GetLen()
@@ -200,9 +218,10 @@ func makeRequest(class ASUWC_Wrapper) (ASUWC_Wrapper, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return class, fmt.Errorf("bad status: %s", res.Status)
-		// // USED TO TEST ON BAD API
-		// return class, nil
+		// return class, fmt.Errorf("bad status: %s", res.Status)
+
+		// USED TO TEST ON BAD API
+		return class, nil
 	}
 
 	bodyBytes, err := io.ReadAll(res.Body)
@@ -241,9 +260,91 @@ func foundOpenClass(class ASUWC_Wrapper) {
 func foundClosedClass(class ASUWC_Wrapper) {
 	log.Logger.Debug("Class has no open seats", "class", class)
 	log.Logger.Debug("Adding class back to ClassQueue", "class", class)
+
 	err := ClassQueue.Enqueue(class)
 	if err != nil {
 		log.Logger.Error("Error adding class back to ClassQueue", "class", class,
 			"error", err)
 	}
+}
+
+func GrabClassInfo(term string, classNbr string) (ASU_API_Response, error) {
+	log.Logger.Debug("Grabbing class info for classNbr:", "classNbr", classNbr, "term", term)
+	// Load API URL from .env
+	// We can do this separately to not worry about order of calling
+	if len(externalApiURL) <= 0 {
+		err := godotenv.Load()
+		if err != nil {
+			log.Logger.Error("Error loading .env file")
+		}
+		log.Logger.Debug("Loading external API URL from .env file")
+		externalApiURL = os.Getenv("ASU_API_URL")
+	}
+
+	// Format url
+	searchUrl := fmt.Sprintf(
+		"%s/classes?refine=Y&advanced=true&classNbr=%s&searchType=all&term=%s",
+		externalApiURL,
+		classNbr,
+		term)
+
+	// Instantiate client
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", searchUrl, nil)
+	if err != nil {
+		return ASU_API_Response{}, err
+	}
+
+	// Set auth
+	req.Header = http.Header{
+		"Authorization": {"Bearer null"},
+	}
+
+	// Do request
+	res, err := client.Do(req)
+	if err != nil {
+		return ASU_API_Response{}, err
+	}
+
+	defer res.Body.Close()
+
+	// Check status code
+	if res.StatusCode != http.StatusOK {
+		return ASU_API_Response{}, fmt.Errorf("bad status: %s", res.Status)
+	}
+
+	// Convert response to bytes
+	bodyBytes, err := io.ReadAll(res.Body)
+	if err != nil {
+		return ASU_API_Response{}, err
+	}
+
+	// Unmarshal response
+	var result ASU_API_Response
+	if err := json.Unmarshal(bodyBytes, &result); err != nil {
+		return ASU_API_Response{}, err
+	}
+
+	return result, nil
+}
+
+func GetWatchedClasses() []ASUWC_Wrapper {
+	for scraping {
+		log.Logger.Debug("Scraping in progress, waiting...")
+		time.Sleep(1 * time.Second)
+	}
+
+	length := ClassQueue.GetLen()
+	var classes []ASUWC_Wrapper
+
+	for i := 0; i < length; i++ {
+		temp, err := ClassQueue.Get(i)
+		if err != nil {
+			log.Logger.Error("Error getting class from queue", "error", err)
+		}
+		classes = append(classes, temp.(ASUWC_Wrapper))
+	}
+
+	log.Logger.Debug("Returning watched classes to API function...")
+	return classes
 }

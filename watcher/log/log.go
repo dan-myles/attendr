@@ -5,13 +5,13 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/log"
+	"github.com/joho/godotenv"
 )
 
 var Logger = log.NewWithOptions(os.Stderr, log.Options{
 	ReportCaller:    true,
 	ReportTimestamp: true,
 	Prefix:          "Watcher 👀",
-	Level:           log.DebugLevel,
 })
 
 func SetLogOptions() {
@@ -64,4 +64,34 @@ func SetLogOptions() {
 			Light: "133",
 			Dark:  "134",
 		})
+
+	err := godotenv.Load()
+	if err != nil {
+		Logger.Fatal("Error loading .env file")
+	}
+
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "debug" {
+		Logger.SetLevel(log.DebugLevel)
+	}
+
+	if logLevel == "warn" {
+		Logger.SetLevel(log.WarnLevel)
+	}
+
+	if logLevel == "error" {
+		Logger.SetLevel(log.ErrorLevel)
+	}
+
+	if logLevel == "info" {
+		Logger.SetLevel(log.InfoLevel)
+	}
+
+	if logLevel == "fatal" {
+		Logger.SetLevel(log.FatalLevel)
+	}
+
+	if logLevel == "all" {
+		Logger.SetLevel(log.DebugLevel)
+	}
 }

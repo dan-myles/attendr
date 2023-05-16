@@ -6,6 +6,7 @@ import (
 	"attendr/watcher/ent/asu_watched_class"
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -16,10 +17,22 @@ type ASU_Watched_Class struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Age holds the value of the "age" field.
-	Age int `json:"age,omitempty"`
-	// Name holds the value of the "name" field.
-	Name         string `json:"name,omitempty"`
+	// Title holds the value of the "title" field.
+	Title string `json:"title,omitempty"`
+	// Instructor holds the value of the "instructor" field.
+	Instructor string `json:"instructor,omitempty"`
+	// Subject holds the value of the "subject" field.
+	Subject string `json:"subject,omitempty"`
+	// SubjectNumber holds the value of the "subject_number" field.
+	SubjectNumber string `json:"subject_number,omitempty"`
+	// HasOpenSeats holds the value of the "has_open_seats" field.
+	HasOpenSeats bool `json:"has_open_seats,omitempty"`
+	// TrackedAt holds the value of the "tracked_at" field.
+	TrackedAt time.Time `json:"tracked_at,omitempty"`
+	// ClassNumber holds the value of the "class_number" field.
+	ClassNumber string `json:"class_number,omitempty"`
+	// Term holds the value of the "term" field.
+	Term         string `json:"term,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -28,10 +41,14 @@ func (*ASU_Watched_Class) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case asu_watched_class.FieldID, asu_watched_class.FieldAge:
+		case asu_watched_class.FieldHasOpenSeats:
+			values[i] = new(sql.NullBool)
+		case asu_watched_class.FieldID:
 			values[i] = new(sql.NullInt64)
-		case asu_watched_class.FieldName:
+		case asu_watched_class.FieldTitle, asu_watched_class.FieldInstructor, asu_watched_class.FieldSubject, asu_watched_class.FieldSubjectNumber, asu_watched_class.FieldClassNumber, asu_watched_class.FieldTerm:
 			values[i] = new(sql.NullString)
+		case asu_watched_class.FieldTrackedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -53,17 +70,53 @@ func (awc *ASU_Watched_Class) assignValues(columns []string, values []any) error
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			awc.ID = int(value.Int64)
-		case asu_watched_class.FieldAge:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field age", values[i])
-			} else if value.Valid {
-				awc.Age = int(value.Int64)
-			}
-		case asu_watched_class.FieldName:
+		case asu_watched_class.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field name", values[i])
+				return fmt.Errorf("unexpected type %T for field title", values[i])
 			} else if value.Valid {
-				awc.Name = value.String
+				awc.Title = value.String
+			}
+		case asu_watched_class.FieldInstructor:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field instructor", values[i])
+			} else if value.Valid {
+				awc.Instructor = value.String
+			}
+		case asu_watched_class.FieldSubject:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field subject", values[i])
+			} else if value.Valid {
+				awc.Subject = value.String
+			}
+		case asu_watched_class.FieldSubjectNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field subject_number", values[i])
+			} else if value.Valid {
+				awc.SubjectNumber = value.String
+			}
+		case asu_watched_class.FieldHasOpenSeats:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field has_open_seats", values[i])
+			} else if value.Valid {
+				awc.HasOpenSeats = value.Bool
+			}
+		case asu_watched_class.FieldTrackedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field tracked_at", values[i])
+			} else if value.Valid {
+				awc.TrackedAt = value.Time
+			}
+		case asu_watched_class.FieldClassNumber:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field class_number", values[i])
+			} else if value.Valid {
+				awc.ClassNumber = value.String
+			}
+		case asu_watched_class.FieldTerm:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field term", values[i])
+			} else if value.Valid {
+				awc.Term = value.String
 			}
 		default:
 			awc.selectValues.Set(columns[i], values[i])
@@ -101,11 +154,29 @@ func (awc *ASU_Watched_Class) String() string {
 	var builder strings.Builder
 	builder.WriteString("ASU_Watched_Class(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", awc.ID))
-	builder.WriteString("age=")
-	builder.WriteString(fmt.Sprintf("%v", awc.Age))
+	builder.WriteString("title=")
+	builder.WriteString(awc.Title)
 	builder.WriteString(", ")
-	builder.WriteString("name=")
-	builder.WriteString(awc.Name)
+	builder.WriteString("instructor=")
+	builder.WriteString(awc.Instructor)
+	builder.WriteString(", ")
+	builder.WriteString("subject=")
+	builder.WriteString(awc.Subject)
+	builder.WriteString(", ")
+	builder.WriteString("subject_number=")
+	builder.WriteString(awc.SubjectNumber)
+	builder.WriteString(", ")
+	builder.WriteString("has_open_seats=")
+	builder.WriteString(fmt.Sprintf("%v", awc.HasOpenSeats))
+	builder.WriteString(", ")
+	builder.WriteString("tracked_at=")
+	builder.WriteString(awc.TrackedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("class_number=")
+	builder.WriteString(awc.ClassNumber)
+	builder.WriteString(", ")
+	builder.WriteString("term=")
+	builder.WriteString(awc.Term)
 	builder.WriteByte(')')
 	return builder.String()
 }

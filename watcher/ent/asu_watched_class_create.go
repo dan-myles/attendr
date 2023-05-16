@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -19,23 +20,73 @@ type ASUWatchedClassCreate struct {
 	hooks    []Hook
 }
 
-// SetAge sets the "age" field.
-func (awcc *ASUWatchedClassCreate) SetAge(i int) *ASUWatchedClassCreate {
-	awcc.mutation.SetAge(i)
+// SetTitle sets the "title" field.
+func (awcc *ASUWatchedClassCreate) SetTitle(s string) *ASUWatchedClassCreate {
+	awcc.mutation.SetTitle(s)
 	return awcc
 }
 
-// SetName sets the "name" field.
-func (awcc *ASUWatchedClassCreate) SetName(s string) *ASUWatchedClassCreate {
-	awcc.mutation.SetName(s)
+// SetInstructor sets the "instructor" field.
+func (awcc *ASUWatchedClassCreate) SetInstructor(s string) *ASUWatchedClassCreate {
+	awcc.mutation.SetInstructor(s)
 	return awcc
 }
 
-// SetNillableName sets the "name" field if the given value is not nil.
-func (awcc *ASUWatchedClassCreate) SetNillableName(s *string) *ASUWatchedClassCreate {
-	if s != nil {
-		awcc.SetName(*s)
+// SetSubject sets the "subject" field.
+func (awcc *ASUWatchedClassCreate) SetSubject(s string) *ASUWatchedClassCreate {
+	awcc.mutation.SetSubject(s)
+	return awcc
+}
+
+// SetSubjectNumber sets the "subject_number" field.
+func (awcc *ASUWatchedClassCreate) SetSubjectNumber(s string) *ASUWatchedClassCreate {
+	awcc.mutation.SetSubjectNumber(s)
+	return awcc
+}
+
+// SetHasOpenSeats sets the "has_open_seats" field.
+func (awcc *ASUWatchedClassCreate) SetHasOpenSeats(b bool) *ASUWatchedClassCreate {
+	awcc.mutation.SetHasOpenSeats(b)
+	return awcc
+}
+
+// SetNillableHasOpenSeats sets the "has_open_seats" field if the given value is not nil.
+func (awcc *ASUWatchedClassCreate) SetNillableHasOpenSeats(b *bool) *ASUWatchedClassCreate {
+	if b != nil {
+		awcc.SetHasOpenSeats(*b)
 	}
+	return awcc
+}
+
+// SetTrackedAt sets the "tracked_at" field.
+func (awcc *ASUWatchedClassCreate) SetTrackedAt(t time.Time) *ASUWatchedClassCreate {
+	awcc.mutation.SetTrackedAt(t)
+	return awcc
+}
+
+// SetNillableTrackedAt sets the "tracked_at" field if the given value is not nil.
+func (awcc *ASUWatchedClassCreate) SetNillableTrackedAt(t *time.Time) *ASUWatchedClassCreate {
+	if t != nil {
+		awcc.SetTrackedAt(*t)
+	}
+	return awcc
+}
+
+// SetClassNumber sets the "class_number" field.
+func (awcc *ASUWatchedClassCreate) SetClassNumber(s string) *ASUWatchedClassCreate {
+	awcc.mutation.SetClassNumber(s)
+	return awcc
+}
+
+// SetTerm sets the "term" field.
+func (awcc *ASUWatchedClassCreate) SetTerm(s string) *ASUWatchedClassCreate {
+	awcc.mutation.SetTerm(s)
+	return awcc
+}
+
+// SetID sets the "id" field.
+func (awcc *ASUWatchedClassCreate) SetID(i int) *ASUWatchedClassCreate {
+	awcc.mutation.SetID(i)
 	return awcc
 }
 
@@ -74,24 +125,41 @@ func (awcc *ASUWatchedClassCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (awcc *ASUWatchedClassCreate) defaults() {
-	if _, ok := awcc.mutation.Name(); !ok {
-		v := asu_watched_class.DefaultName
-		awcc.mutation.SetName(v)
+	if _, ok := awcc.mutation.HasOpenSeats(); !ok {
+		v := asu_watched_class.DefaultHasOpenSeats
+		awcc.mutation.SetHasOpenSeats(v)
+	}
+	if _, ok := awcc.mutation.TrackedAt(); !ok {
+		v := asu_watched_class.DefaultTrackedAt()
+		awcc.mutation.SetTrackedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (awcc *ASUWatchedClassCreate) check() error {
-	if _, ok := awcc.mutation.Age(); !ok {
-		return &ValidationError{Name: "age", err: errors.New(`ent: missing required field "ASU_Watched_Class.age"`)}
+	if _, ok := awcc.mutation.Title(); !ok {
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "ASU_Watched_Class.title"`)}
 	}
-	if v, ok := awcc.mutation.Age(); ok {
-		if err := asu_watched_class.AgeValidator(v); err != nil {
-			return &ValidationError{Name: "age", err: fmt.Errorf(`ent: validator failed for field "ASU_Watched_Class.age": %w`, err)}
-		}
+	if _, ok := awcc.mutation.Instructor(); !ok {
+		return &ValidationError{Name: "instructor", err: errors.New(`ent: missing required field "ASU_Watched_Class.instructor"`)}
 	}
-	if _, ok := awcc.mutation.Name(); !ok {
-		return &ValidationError{Name: "name", err: errors.New(`ent: missing required field "ASU_Watched_Class.name"`)}
+	if _, ok := awcc.mutation.Subject(); !ok {
+		return &ValidationError{Name: "subject", err: errors.New(`ent: missing required field "ASU_Watched_Class.subject"`)}
+	}
+	if _, ok := awcc.mutation.SubjectNumber(); !ok {
+		return &ValidationError{Name: "subject_number", err: errors.New(`ent: missing required field "ASU_Watched_Class.subject_number"`)}
+	}
+	if _, ok := awcc.mutation.HasOpenSeats(); !ok {
+		return &ValidationError{Name: "has_open_seats", err: errors.New(`ent: missing required field "ASU_Watched_Class.has_open_seats"`)}
+	}
+	if _, ok := awcc.mutation.TrackedAt(); !ok {
+		return &ValidationError{Name: "tracked_at", err: errors.New(`ent: missing required field "ASU_Watched_Class.tracked_at"`)}
+	}
+	if _, ok := awcc.mutation.ClassNumber(); !ok {
+		return &ValidationError{Name: "class_number", err: errors.New(`ent: missing required field "ASU_Watched_Class.class_number"`)}
+	}
+	if _, ok := awcc.mutation.Term(); !ok {
+		return &ValidationError{Name: "term", err: errors.New(`ent: missing required field "ASU_Watched_Class.term"`)}
 	}
 	return nil
 }
@@ -107,8 +175,10 @@ func (awcc *ASUWatchedClassCreate) sqlSave(ctx context.Context) (*ASU_Watched_Cl
 		}
 		return nil, err
 	}
-	id := _spec.ID.Value.(int64)
-	_node.ID = int(id)
+	if _spec.ID.Value != _node.ID {
+		id := _spec.ID.Value.(int64)
+		_node.ID = int(id)
+	}
 	awcc.mutation.id = &_node.ID
 	awcc.mutation.done = true
 	return _node, nil
@@ -119,13 +189,41 @@ func (awcc *ASUWatchedClassCreate) createSpec() (*ASU_Watched_Class, *sqlgraph.C
 		_node = &ASU_Watched_Class{config: awcc.config}
 		_spec = sqlgraph.NewCreateSpec(asu_watched_class.Table, sqlgraph.NewFieldSpec(asu_watched_class.FieldID, field.TypeInt))
 	)
-	if value, ok := awcc.mutation.Age(); ok {
-		_spec.SetField(asu_watched_class.FieldAge, field.TypeInt, value)
-		_node.Age = value
+	if id, ok := awcc.mutation.ID(); ok {
+		_node.ID = id
+		_spec.ID.Value = id
 	}
-	if value, ok := awcc.mutation.Name(); ok {
-		_spec.SetField(asu_watched_class.FieldName, field.TypeString, value)
-		_node.Name = value
+	if value, ok := awcc.mutation.Title(); ok {
+		_spec.SetField(asu_watched_class.FieldTitle, field.TypeString, value)
+		_node.Title = value
+	}
+	if value, ok := awcc.mutation.Instructor(); ok {
+		_spec.SetField(asu_watched_class.FieldInstructor, field.TypeString, value)
+		_node.Instructor = value
+	}
+	if value, ok := awcc.mutation.Subject(); ok {
+		_spec.SetField(asu_watched_class.FieldSubject, field.TypeString, value)
+		_node.Subject = value
+	}
+	if value, ok := awcc.mutation.SubjectNumber(); ok {
+		_spec.SetField(asu_watched_class.FieldSubjectNumber, field.TypeString, value)
+		_node.SubjectNumber = value
+	}
+	if value, ok := awcc.mutation.HasOpenSeats(); ok {
+		_spec.SetField(asu_watched_class.FieldHasOpenSeats, field.TypeBool, value)
+		_node.HasOpenSeats = value
+	}
+	if value, ok := awcc.mutation.TrackedAt(); ok {
+		_spec.SetField(asu_watched_class.FieldTrackedAt, field.TypeTime, value)
+		_node.TrackedAt = value
+	}
+	if value, ok := awcc.mutation.ClassNumber(); ok {
+		_spec.SetField(asu_watched_class.FieldClassNumber, field.TypeString, value)
+		_node.ClassNumber = value
+	}
+	if value, ok := awcc.mutation.Term(); ok {
+		_spec.SetField(asu_watched_class.FieldTerm, field.TypeString, value)
+		_node.Term = value
 	}
 	return _node, _spec
 }
@@ -171,7 +269,7 @@ func (awccb *ASUWatchedClassCreateBulk) Save(ctx context.Context) ([]*ASU_Watche
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil {
+				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

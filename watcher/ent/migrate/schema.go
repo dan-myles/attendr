@@ -11,8 +11,14 @@ var (
 	// AsuWatchedClassesColumns holds the columns for the "asu_watched_classes" table.
 	AsuWatchedClassesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "age", Type: field.TypeInt},
-		{Name: "name", Type: field.TypeString, Default: "unknown"},
+		{Name: "title", Type: field.TypeString},
+		{Name: "instructor", Type: field.TypeString},
+		{Name: "subject", Type: field.TypeString},
+		{Name: "subject_number", Type: field.TypeString},
+		{Name: "has_open_seats", Type: field.TypeBool, Default: false},
+		{Name: "tracked_at", Type: field.TypeTime},
+		{Name: "class_number", Type: field.TypeString, Unique: true},
+		{Name: "term", Type: field.TypeString},
 	}
 	// AsuWatchedClassesTable holds the schema information for the "asu_watched_classes" table.
 	AsuWatchedClassesTable = &schema.Table{

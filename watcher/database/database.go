@@ -2,48 +2,78 @@ package database
 
 import (
 	"attendr/watcher/ent"
+	"attendr/watcher/log"
 	"context"
-	"log"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 )
 
-func Connect() {
+var (
+	Client      *ent.Client
+	databaseUrl string
+)
+
+func Init() {
 	// Loading Environment Variables
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Logger.Error("Error loading .env file")
 	}
-	databaseUrl := os.Getenv("DATABASE_URL")
+
+	databaseUrl = os.Getenv("DATABASE_URL")
+	log.Logger.Debug("Loaded database env variables")
 
 	// Connecting to the database
-	client, err := ent.Open("mysql", databaseUrl)
+	Client, err = ent.Open("mysql", databaseUrl)
 	if err != nil {
-		log.Fatalf("Failed opening connection to mysql: %v", err)
+		log.Logger.Error("Failed opening connection to mysql: %v", err)
 	}
 
 	// Run the auto migration tool
-	schema_err := client.Schema.Create(context.Background())
+	schema_err := Client.Schema.Create(context.Background())
 	if schema_err != nil {
-		log.Fatalf("Failed creating schema resources: %v", schema_err)
+		log.Logger.Error("Failed creating schema resources: %v", schema_err)
 	}
 
-	defer client.Close()
+	log.Logger.Debug("Ran the database schema migration tool")
+
+	defer Client.Close()
 }
 
-func CreateUser(ctx context.Context, client *ent.Client) (*ent.ASU_Watched_Class, error) {
-	u, err := client.ASU_Watched_Class.
+func openConnection() {
+	// Connecting to the database
+	Client, _ = ent.Open("mysql", databaseUrl)
+
+	log.Logger.Debug("Opened a connection to the database")
+}
+
+func closeConnection() {
+	// Closing the connection to the database
+	Client.Close()
+
+	log.Logger.Debug("Closed the connection to the database")
+}
+
+func AddToWatchlist(ctx context.Context) (*ent.ASU_Watched_Class, error) {
+	openConnection()
+	defer closeConnection()
+
+	u, err := Client.ASU_Watched_Class.
 		Create().
-		SetAge(20).
-		SetName("Foo").
+		SetTitle("Test Class").
+		SetInstructor("Test Instructor").
+		SetSubject("Test Subject").
+		SetSubjectNumber("Test Subject Number").
+		SetHasOpenSeats(false).
+		SetClassNumber("Test Class Number").
+		SetTerm("Test Term").
 		Save(ctx)
 	if err != nil {
-		log.Fatalf("failed creating user: %v", err)
 		return nil, err
 	}
 
-	log.Println("user was created: ", u)
+	log.Logger.Debug("Class was added watchlist database: ", u)
 	return u, nil
 }

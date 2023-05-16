@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -29,16 +30,21 @@ const (
 // ASUWatchedClassMutation represents an operation that mutates the ASU_Watched_Class nodes in the graph.
 type ASUWatchedClassMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	age           *int
-	addage        *int
-	name          *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*ASU_Watched_Class, error)
-	predicates    []predicate.ASU_Watched_Class
+	op             Op
+	typ            string
+	id             *int
+	title          *string
+	instructor     *string
+	subject        *string
+	subject_number *string
+	has_open_seats *bool
+	tracked_at     *time.Time
+	class_number   *string
+	term           *string
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*ASU_Watched_Class, error)
+	predicates     []predicate.ASU_Watched_Class
 }
 
 var _ ent.Mutation = (*ASUWatchedClassMutation)(nil)
@@ -111,6 +117,12 @@ func (m ASUWatchedClassMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ASU_Watched_Class entities.
+func (m *ASUWatchedClassMutation) SetID(id int) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
 func (m *ASUWatchedClassMutation) ID() (id int, exists bool) {
@@ -139,96 +151,292 @@ func (m *ASUWatchedClassMutation) IDs(ctx context.Context) ([]int, error) {
 	}
 }
 
-// SetAge sets the "age" field.
-func (m *ASUWatchedClassMutation) SetAge(i int) {
-	m.age = &i
-	m.addage = nil
+// SetTitle sets the "title" field.
+func (m *ASUWatchedClassMutation) SetTitle(s string) {
+	m.title = &s
 }
 
-// Age returns the value of the "age" field in the mutation.
-func (m *ASUWatchedClassMutation) Age() (r int, exists bool) {
-	v := m.age
+// Title returns the value of the "title" field in the mutation.
+func (m *ASUWatchedClassMutation) Title() (r string, exists bool) {
+	v := m.title
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAge returns the old "age" field's value of the ASU_Watched_Class entity.
+// OldTitle returns the old "title" field's value of the ASU_Watched_Class entity.
 // If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ASUWatchedClassMutation) OldAge(ctx context.Context) (v int, err error) {
+func (m *ASUWatchedClassMutation) OldTitle(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAge is only allowed on UpdateOne operations")
+		return v, errors.New("OldTitle is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAge requires an ID field in the mutation")
+		return v, errors.New("OldTitle requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAge: %w", err)
+		return v, fmt.Errorf("querying old value for OldTitle: %w", err)
 	}
-	return oldValue.Age, nil
+	return oldValue.Title, nil
 }
 
-// AddAge adds i to the "age" field.
-func (m *ASUWatchedClassMutation) AddAge(i int) {
-	if m.addage != nil {
-		*m.addage += i
-	} else {
-		m.addage = &i
-	}
+// ResetTitle resets all changes to the "title" field.
+func (m *ASUWatchedClassMutation) ResetTitle() {
+	m.title = nil
 }
 
-// AddedAge returns the value that was added to the "age" field in this mutation.
-func (m *ASUWatchedClassMutation) AddedAge() (r int, exists bool) {
-	v := m.addage
+// SetInstructor sets the "instructor" field.
+func (m *ASUWatchedClassMutation) SetInstructor(s string) {
+	m.instructor = &s
+}
+
+// Instructor returns the value of the "instructor" field in the mutation.
+func (m *ASUWatchedClassMutation) Instructor() (r string, exists bool) {
+	v := m.instructor
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetAge resets all changes to the "age" field.
-func (m *ASUWatchedClassMutation) ResetAge() {
-	m.age = nil
-	m.addage = nil
-}
-
-// SetName sets the "name" field.
-func (m *ASUWatchedClassMutation) SetName(s string) {
-	m.name = &s
-}
-
-// Name returns the value of the "name" field in the mutation.
-func (m *ASUWatchedClassMutation) Name() (r string, exists bool) {
-	v := m.name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldName returns the old "name" field's value of the ASU_Watched_Class entity.
+// OldInstructor returns the old "instructor" field's value of the ASU_Watched_Class entity.
 // If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ASUWatchedClassMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *ASUWatchedClassMutation) OldInstructor(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldName is only allowed on UpdateOne operations")
+		return v, errors.New("OldInstructor is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldName requires an ID field in the mutation")
+		return v, errors.New("OldInstructor requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldName: %w", err)
+		return v, fmt.Errorf("querying old value for OldInstructor: %w", err)
 	}
-	return oldValue.Name, nil
+	return oldValue.Instructor, nil
 }
 
-// ResetName resets all changes to the "name" field.
-func (m *ASUWatchedClassMutation) ResetName() {
-	m.name = nil
+// ResetInstructor resets all changes to the "instructor" field.
+func (m *ASUWatchedClassMutation) ResetInstructor() {
+	m.instructor = nil
+}
+
+// SetSubject sets the "subject" field.
+func (m *ASUWatchedClassMutation) SetSubject(s string) {
+	m.subject = &s
+}
+
+// Subject returns the value of the "subject" field in the mutation.
+func (m *ASUWatchedClassMutation) Subject() (r string, exists bool) {
+	v := m.subject
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubject returns the old "subject" field's value of the ASU_Watched_Class entity.
+// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ASUWatchedClassMutation) OldSubject(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubject is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubject requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubject: %w", err)
+	}
+	return oldValue.Subject, nil
+}
+
+// ResetSubject resets all changes to the "subject" field.
+func (m *ASUWatchedClassMutation) ResetSubject() {
+	m.subject = nil
+}
+
+// SetSubjectNumber sets the "subject_number" field.
+func (m *ASUWatchedClassMutation) SetSubjectNumber(s string) {
+	m.subject_number = &s
+}
+
+// SubjectNumber returns the value of the "subject_number" field in the mutation.
+func (m *ASUWatchedClassMutation) SubjectNumber() (r string, exists bool) {
+	v := m.subject_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSubjectNumber returns the old "subject_number" field's value of the ASU_Watched_Class entity.
+// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ASUWatchedClassMutation) OldSubjectNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSubjectNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSubjectNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSubjectNumber: %w", err)
+	}
+	return oldValue.SubjectNumber, nil
+}
+
+// ResetSubjectNumber resets all changes to the "subject_number" field.
+func (m *ASUWatchedClassMutation) ResetSubjectNumber() {
+	m.subject_number = nil
+}
+
+// SetHasOpenSeats sets the "has_open_seats" field.
+func (m *ASUWatchedClassMutation) SetHasOpenSeats(b bool) {
+	m.has_open_seats = &b
+}
+
+// HasOpenSeats returns the value of the "has_open_seats" field in the mutation.
+func (m *ASUWatchedClassMutation) HasOpenSeats() (r bool, exists bool) {
+	v := m.has_open_seats
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldHasOpenSeats returns the old "has_open_seats" field's value of the ASU_Watched_Class entity.
+// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ASUWatchedClassMutation) OldHasOpenSeats(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldHasOpenSeats is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldHasOpenSeats requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldHasOpenSeats: %w", err)
+	}
+	return oldValue.HasOpenSeats, nil
+}
+
+// ResetHasOpenSeats resets all changes to the "has_open_seats" field.
+func (m *ASUWatchedClassMutation) ResetHasOpenSeats() {
+	m.has_open_seats = nil
+}
+
+// SetTrackedAt sets the "tracked_at" field.
+func (m *ASUWatchedClassMutation) SetTrackedAt(t time.Time) {
+	m.tracked_at = &t
+}
+
+// TrackedAt returns the value of the "tracked_at" field in the mutation.
+func (m *ASUWatchedClassMutation) TrackedAt() (r time.Time, exists bool) {
+	v := m.tracked_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTrackedAt returns the old "tracked_at" field's value of the ASU_Watched_Class entity.
+// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ASUWatchedClassMutation) OldTrackedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTrackedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTrackedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTrackedAt: %w", err)
+	}
+	return oldValue.TrackedAt, nil
+}
+
+// ResetTrackedAt resets all changes to the "tracked_at" field.
+func (m *ASUWatchedClassMutation) ResetTrackedAt() {
+	m.tracked_at = nil
+}
+
+// SetClassNumber sets the "class_number" field.
+func (m *ASUWatchedClassMutation) SetClassNumber(s string) {
+	m.class_number = &s
+}
+
+// ClassNumber returns the value of the "class_number" field in the mutation.
+func (m *ASUWatchedClassMutation) ClassNumber() (r string, exists bool) {
+	v := m.class_number
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldClassNumber returns the old "class_number" field's value of the ASU_Watched_Class entity.
+// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ASUWatchedClassMutation) OldClassNumber(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldClassNumber is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldClassNumber requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldClassNumber: %w", err)
+	}
+	return oldValue.ClassNumber, nil
+}
+
+// ResetClassNumber resets all changes to the "class_number" field.
+func (m *ASUWatchedClassMutation) ResetClassNumber() {
+	m.class_number = nil
+}
+
+// SetTerm sets the "term" field.
+func (m *ASUWatchedClassMutation) SetTerm(s string) {
+	m.term = &s
+}
+
+// Term returns the value of the "term" field in the mutation.
+func (m *ASUWatchedClassMutation) Term() (r string, exists bool) {
+	v := m.term
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTerm returns the old "term" field's value of the ASU_Watched_Class entity.
+// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ASUWatchedClassMutation) OldTerm(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTerm is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTerm requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTerm: %w", err)
+	}
+	return oldValue.Term, nil
+}
+
+// ResetTerm resets all changes to the "term" field.
+func (m *ASUWatchedClassMutation) ResetTerm() {
+	m.term = nil
 }
 
 // Where appends a list predicates to the ASUWatchedClassMutation builder.
@@ -265,12 +473,30 @@ func (m *ASUWatchedClassMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ASUWatchedClassMutation) Fields() []string {
-	fields := make([]string, 0, 2)
-	if m.age != nil {
-		fields = append(fields, asu_watched_class.FieldAge)
+	fields := make([]string, 0, 8)
+	if m.title != nil {
+		fields = append(fields, asu_watched_class.FieldTitle)
 	}
-	if m.name != nil {
-		fields = append(fields, asu_watched_class.FieldName)
+	if m.instructor != nil {
+		fields = append(fields, asu_watched_class.FieldInstructor)
+	}
+	if m.subject != nil {
+		fields = append(fields, asu_watched_class.FieldSubject)
+	}
+	if m.subject_number != nil {
+		fields = append(fields, asu_watched_class.FieldSubjectNumber)
+	}
+	if m.has_open_seats != nil {
+		fields = append(fields, asu_watched_class.FieldHasOpenSeats)
+	}
+	if m.tracked_at != nil {
+		fields = append(fields, asu_watched_class.FieldTrackedAt)
+	}
+	if m.class_number != nil {
+		fields = append(fields, asu_watched_class.FieldClassNumber)
+	}
+	if m.term != nil {
+		fields = append(fields, asu_watched_class.FieldTerm)
 	}
 	return fields
 }
@@ -280,10 +506,22 @@ func (m *ASUWatchedClassMutation) Fields() []string {
 // schema.
 func (m *ASUWatchedClassMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case asu_watched_class.FieldAge:
-		return m.Age()
-	case asu_watched_class.FieldName:
-		return m.Name()
+	case asu_watched_class.FieldTitle:
+		return m.Title()
+	case asu_watched_class.FieldInstructor:
+		return m.Instructor()
+	case asu_watched_class.FieldSubject:
+		return m.Subject()
+	case asu_watched_class.FieldSubjectNumber:
+		return m.SubjectNumber()
+	case asu_watched_class.FieldHasOpenSeats:
+		return m.HasOpenSeats()
+	case asu_watched_class.FieldTrackedAt:
+		return m.TrackedAt()
+	case asu_watched_class.FieldClassNumber:
+		return m.ClassNumber()
+	case asu_watched_class.FieldTerm:
+		return m.Term()
 	}
 	return nil, false
 }
@@ -293,10 +531,22 @@ func (m *ASUWatchedClassMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ASUWatchedClassMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case asu_watched_class.FieldAge:
-		return m.OldAge(ctx)
-	case asu_watched_class.FieldName:
-		return m.OldName(ctx)
+	case asu_watched_class.FieldTitle:
+		return m.OldTitle(ctx)
+	case asu_watched_class.FieldInstructor:
+		return m.OldInstructor(ctx)
+	case asu_watched_class.FieldSubject:
+		return m.OldSubject(ctx)
+	case asu_watched_class.FieldSubjectNumber:
+		return m.OldSubjectNumber(ctx)
+	case asu_watched_class.FieldHasOpenSeats:
+		return m.OldHasOpenSeats(ctx)
+	case asu_watched_class.FieldTrackedAt:
+		return m.OldTrackedAt(ctx)
+	case asu_watched_class.FieldClassNumber:
+		return m.OldClassNumber(ctx)
+	case asu_watched_class.FieldTerm:
+		return m.OldTerm(ctx)
 	}
 	return nil, fmt.Errorf("unknown ASU_Watched_Class field %s", name)
 }
@@ -306,19 +556,61 @@ func (m *ASUWatchedClassMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *ASUWatchedClassMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case asu_watched_class.FieldAge:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAge(v)
-		return nil
-	case asu_watched_class.FieldName:
+	case asu_watched_class.FieldTitle:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetName(v)
+		m.SetTitle(v)
+		return nil
+	case asu_watched_class.FieldInstructor:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetInstructor(v)
+		return nil
+	case asu_watched_class.FieldSubject:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubject(v)
+		return nil
+	case asu_watched_class.FieldSubjectNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSubjectNumber(v)
+		return nil
+	case asu_watched_class.FieldHasOpenSeats:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetHasOpenSeats(v)
+		return nil
+	case asu_watched_class.FieldTrackedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTrackedAt(v)
+		return nil
+	case asu_watched_class.FieldClassNumber:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetClassNumber(v)
+		return nil
+	case asu_watched_class.FieldTerm:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTerm(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ASU_Watched_Class field %s", name)
@@ -327,21 +619,13 @@ func (m *ASUWatchedClassMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *ASUWatchedClassMutation) AddedFields() []string {
-	var fields []string
-	if m.addage != nil {
-		fields = append(fields, asu_watched_class.FieldAge)
-	}
-	return fields
+	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *ASUWatchedClassMutation) AddedField(name string) (ent.Value, bool) {
-	switch name {
-	case asu_watched_class.FieldAge:
-		return m.AddedAge()
-	}
 	return nil, false
 }
 
@@ -350,13 +634,6 @@ func (m *ASUWatchedClassMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ASUWatchedClassMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case asu_watched_class.FieldAge:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddAge(v)
-		return nil
 	}
 	return fmt.Errorf("unknown ASU_Watched_Class numeric field %s", name)
 }
@@ -384,11 +661,29 @@ func (m *ASUWatchedClassMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ASUWatchedClassMutation) ResetField(name string) error {
 	switch name {
-	case asu_watched_class.FieldAge:
-		m.ResetAge()
+	case asu_watched_class.FieldTitle:
+		m.ResetTitle()
 		return nil
-	case asu_watched_class.FieldName:
-		m.ResetName()
+	case asu_watched_class.FieldInstructor:
+		m.ResetInstructor()
+		return nil
+	case asu_watched_class.FieldSubject:
+		m.ResetSubject()
+		return nil
+	case asu_watched_class.FieldSubjectNumber:
+		m.ResetSubjectNumber()
+		return nil
+	case asu_watched_class.FieldHasOpenSeats:
+		m.ResetHasOpenSeats()
+		return nil
+	case asu_watched_class.FieldTrackedAt:
+		m.ResetTrackedAt()
+		return nil
+	case asu_watched_class.FieldClassNumber:
+		m.ResetClassNumber()
+		return nil
+	case asu_watched_class.FieldTerm:
+		m.ResetTerm()
 		return nil
 	}
 	return fmt.Errorf("unknown ASU_Watched_Class field %s", name)

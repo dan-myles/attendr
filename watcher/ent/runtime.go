@@ -5,6 +5,7 @@ package ent
 import (
 	"attendr/watcher/ent/asu_watched_class"
 	"attendr/watcher/ent/schema"
+	"time"
 )
 
 // The init function reads all schema descriptors with runtime code
@@ -13,12 +14,12 @@ import (
 func init() {
 	asu_watched_classFields := schema.ASU_Watched_Class{}.Fields()
 	_ = asu_watched_classFields
-	// asu_watched_classDescAge is the schema descriptor for age field.
-	asu_watched_classDescAge := asu_watched_classFields[0].Descriptor()
-	// asu_watched_class.AgeValidator is a validator for the "age" field. It is called by the builders before save.
-	asu_watched_class.AgeValidator = asu_watched_classDescAge.Validators[0].(func(int) error)
-	// asu_watched_classDescName is the schema descriptor for name field.
-	asu_watched_classDescName := asu_watched_classFields[1].Descriptor()
-	// asu_watched_class.DefaultName holds the default value on creation for the name field.
-	asu_watched_class.DefaultName = asu_watched_classDescName.Default.(string)
+	// asu_watched_classDescHasOpenSeats is the schema descriptor for has_open_seats field.
+	asu_watched_classDescHasOpenSeats := asu_watched_classFields[5].Descriptor()
+	// asu_watched_class.DefaultHasOpenSeats holds the default value on creation for the has_open_seats field.
+	asu_watched_class.DefaultHasOpenSeats = asu_watched_classDescHasOpenSeats.Default.(bool)
+	// asu_watched_classDescTrackedAt is the schema descriptor for tracked_at field.
+	asu_watched_classDescTrackedAt := asu_watched_classFields[6].Descriptor()
+	// asu_watched_class.DefaultTrackedAt holds the default value on creation for the tracked_at field.
+	asu_watched_class.DefaultTrackedAt = asu_watched_classDescTrackedAt.Default.(func() time.Time)
 }
