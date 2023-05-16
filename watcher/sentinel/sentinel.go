@@ -1,5 +1,6 @@
 /*
-* TODO: handle adding multiple duplicate classes to the queue
+* TODO:
+* handle adding multiple duplicate classes to the queue
 * Currently they won't get added, but API returns success
 * Need some sort of new DB table of users watching specific classes
 **/
