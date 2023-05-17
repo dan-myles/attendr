@@ -1,7 +1,7 @@
 // TODO:
 //  - Add email and phone number Class Tracking DB table
 //  - Add functions to add & remove user notification preferences to DB
-//    In general track email and phone number to send notifications to
+//      In general track email and phone number to send notifications to
 
 package database
 
@@ -68,6 +68,7 @@ func closeConnection() {
 /*
 * Syncs the watchlist to the database
 * NOTE: Not sure if this is needed as classes are added to DB when POSTed
+* Currently its not being called anywhere
 **/
 func SyncWatchlistToDb(ctx context.Context, classes []ent.ASU_Watched_Class) error {
 	openConnection()
