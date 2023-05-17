@@ -1,0 +1,3 @@
+# Attendr
+This is the monorepo for all attendr services.
+More information coming soon...
