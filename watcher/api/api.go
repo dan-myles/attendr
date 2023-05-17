@@ -14,6 +14,7 @@ import (
 	"attendr/watcher/sentinel"
 	"attendr/watcher/utils"
 	"context"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -68,10 +69,18 @@ func addWatchedClass(c *gin.Context) {
 	}
 
 	// Add class to sentinel.Watchlist
-	sentinel.Watchlist = append(sentinel.Watchlist, *class)
-	utils.Logger.Debug(sentinel.Watchlist)
+	// Have to dispatch go routine as we will not add a class while scraping
+	go func() {
+		for sentinel.Scraping {
+			time.Sleep(1 * time.Second)
+		}
+
+		sentinel.Watchlist = append(sentinel.Watchlist, class)
+		utils.Logger.Info("Added class to watchlist:", "class", class.ClassNumber)
+	}()
+
 	c.JSON(200, gin.H{
-		"message": "Class added to watchlist.",
+		"message": "Class in queue to be added to watchlist.",
 	})
 }
 

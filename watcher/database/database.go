@@ -1,7 +1,7 @@
 // TODO:
-//   - Add email and phone number Class Tracking DB table
-//   - Add functions to add & remove user notification preferences to DB
-//     In general track email and phone number to send notifications to
+//  - Add email and phone number Class Tracking DB table
+//  - Add functions to add & remove user notification preferences to DB
+//    In general track email and phone number to send notifications to
 
 package database
 

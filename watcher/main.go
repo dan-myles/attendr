@@ -5,6 +5,7 @@ import (
 	"attendr/watcher/database"
 	"attendr/watcher/sentinel"
 	"attendr/watcher/utils"
+	"sync"
 )
 
 func main() {
@@ -17,6 +18,14 @@ func main() {
 	// Initialize the sentinel
 	sentinel.InitSentinel()
 
-	// Start the API webserver
+	// Start the sentinel
+	var wg sync.WaitGroup
+	wg.Add(1)
+
+	go sentinel.StartSentinel(&wg)
+
+	// Start the webserver
 	api.StartWebServer()
+
+	wg.Wait()
 }
