@@ -5,6 +5,7 @@
 //    First delete the users notification preferences
 //    If it was the last user tracking the class then delete it from the DB
 // Currently it just deletes the class from the DB and will affect all users
+// - Add Clerk authentication to all routes
 
 package api
 
@@ -74,6 +75,9 @@ func addWatchedClass(c *gin.Context) {
 	})
 }
 
+/*
+* Removes a watched class
+**/
 func removeWatchedClass(c *gin.Context) {
 	classNbr := c.Query("classNbr")
 	term := c.Query("term")
@@ -111,6 +115,9 @@ func removeWatchedClass(c *gin.Context) {
 	}
 }
 
+/*
+* Returns the array of watched classes
+**/
 func getWatchedClasses(c *gin.Context) {
 	c.JSON(200, sentinel.Watchlist)
 }
