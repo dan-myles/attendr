@@ -1,4 +1,4 @@
-package log
+package utils
 
 import (
 	"os"
@@ -14,7 +14,7 @@ var Logger = log.NewWithOptions(os.Stderr, log.Options{
 	Prefix:          "Watcher 👀",
 })
 
-func SetLogOptions() {
+func InitLogger() {
 	// DebugLevel is the style for debug level.
 	log.DebugLevelStyle = lipgloss.NewStyle().
 		SetString("DEBUG").
@@ -67,10 +67,13 @@ func SetLogOptions() {
 
 	err := godotenv.Load()
 	if err != nil {
-		Logger.Fatal("Error loading .env file")
+		Logger.Error("Error loading .env file")
+	}
+	logLevel := os.Getenv("LOG_LEVEL")
+	if len(logLevel) <= 0 {
+		Logger.Error("LOG_LEVEL not set in .env file")
 	}
 
-	logLevel := os.Getenv("LOG_LEVEL")
 	if logLevel == "debug" {
 		Logger.SetLevel(log.DebugLevel)
 	}

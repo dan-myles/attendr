@@ -3,28 +3,20 @@ package main
 import (
 	"attendr/watcher/api"
 	"attendr/watcher/database"
-	"attendr/watcher/log"
 	"attendr/watcher/sentinel"
-	"sync"
+	"attendr/watcher/utils"
 )
 
 func main() {
-	// Setting Logging Preferences
-	log.SetLogOptions()
+	// Initialize the database
+	database.InitDbConnection()
 
-	// Run schema migration tool
-	database.Init()
+	// Initialize the logger
+	utils.InitLogger()
 
-	// Instantiate WaitGroup
-	var wg sync.WaitGroup
+	// Initialize the sentinel
+	sentinel.InitSentinel()
 
-	// Start the sentinel before the API
-	wg.Add(1)
-	go sentinel.Start(&wg)
-
-	// Start the webserver
+	// Start the API webserver
 	api.StartWebServer()
-
-	// Keep main thread alive
-	wg.Wait()
 }

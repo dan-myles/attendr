@@ -1,6 +1,11 @@
-package sentinel
+package asu
 
-type ASU_API_Response struct {
+/*
+* In general, the API response is used throughout the program to store API data
+* However, only the first index "0" is used to access data, as we are querying
+* with a single class number, and expect a single class in return.
+**/
+type ApiResponse struct {
 	Classes []struct {
 		Clas struct {
 			Strm                              string     `json:"STRM"`
@@ -108,8 +113,8 @@ type ASU_API_Response struct {
 			Ssrcount                          int        `json:"SSRCOUNT"`
 			Hasactivereservedseats            string     `json:"HASACTIVERESERVEDSEATS"`
 			Daylist                           string     `json:"DAYLIST"`
-			Notes                             []string   `json:"NOTES"`
-			Notesnumbers                      []string   `json:"NOTESNUMBERS"`
+			Notes                             []any      `json:"NOTES"`
+			Notesnumbers                      []any      `json:"NOTESNUMBERS"`
 			Iframenotes                       any        `json:"IFRAMENOTES"`
 			Ssr                               string     `json:"SSR"`
 			Passenrolldeadline                any        `json:"PASSENROLLDEADLINE"`
@@ -126,20 +131,20 @@ type ASU_API_Response struct {
 			State                             string     `json:"STATE"`
 			Asubldaddress                     string     `json:"ASUBLDADDRESS"`
 			Subjectdescription                string     `json:"SUBJECTDESCRIPTION"`
-			Instructorslastnamelist           any        `json:"INSTRUCTORSLASTNAMELIST"`
-			Instructorsfirstnamelist          any        `json:"INSTRUCTORSFIRSTNAMELIST"`
-			Instructorslist                   any        `json:"INSTRUCTORSLIST"`
-			Instructorsfirstnameshowall       any        `json:"INSTRUCTORSFIRSTNAMESHOWALL"`
-			Instructorslastnameshowall        any        `json:"INSTRUCTORSLASTNAMESHOWALL"`
-			Instructorlistforkeyword          any        `json:"INSTRUCTORLISTFORKEYWORD"`
+			Instructorslastnamelist           []string   `json:"INSTRUCTORSLASTNAMELIST"`
+			Instructorsfirstnamelist          []string   `json:"INSTRUCTORSFIRSTNAMELIST"`
+			Instructorslist                   []string   `json:"INSTRUCTORSLIST"`
+			Instructorsfirstnameshowall       []string   `json:"INSTRUCTORSFIRSTNAMESHOWALL"`
+			Instructorslastnameshowall        []string   `json:"INSTRUCTORSLASTNAMESHOWALL"`
+			Instructorlistforkeyword          string     `json:"INSTRUCTORLISTFORKEYWORD"`
 			Instructorslastnamelistforsorting string     `json:"INSTRUCTORSLASTNAMELISTFORSORTING"`
 			Meetingdates                      [][]string `json:"MEETINGDATES"`
 			Meetingdatesforsorting            int64      `json:"MEETINGDATESFORSORTING"`
-			Starttimes                        []string   `json:"STARTTIMES"`
-			Endtimes                          []string   `json:"ENDTIMES"`
+			Starttimes                        []any      `json:"STARTTIMES"`
+			Endtimes                          []any      `json:"ENDTIMES"`
+			Starttimesforsorting              string     `json:"STARTTIMESFORSORTING"`
 			ShortDesc                         string     `json:"SHORT_DESC"`
 			Starttimeformatted                string     `json:"STARTTIMEFORMATTED"`
-			Starttimesforsorting              string     `json:"STARTTIMESFORSORTING"`
 			Endtimeformatted                  string     `json:"ENDTIMEFORMATTED"`
 			Classdays                         string     `json:"CLASSDAYS"`
 			Catalognbrnumber                  int        `json:"CATALOGNBRNUMBER"`
