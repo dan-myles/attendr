@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 	"attendr/watcher/ent/predicate"
 	"context"
 	"fmt"
@@ -14,20 +14,20 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ASUWatchedClassQuery is the builder for querying ASU_Watched_Class entities.
+// ASUWatchedClassQuery is the builder for querying ASUWatchedClass entities.
 type ASUWatchedClassQuery struct {
 	config
 	ctx        *QueryContext
-	order      []asu_watched_class.OrderOption
+	order      []asuwatchedclass.OrderOption
 	inters     []Interceptor
-	predicates []predicate.ASU_Watched_Class
+	predicates []predicate.ASUWatchedClass
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
 // Where adds a new predicate for the ASUWatchedClassQuery builder.
-func (awcq *ASUWatchedClassQuery) Where(ps ...predicate.ASU_Watched_Class) *ASUWatchedClassQuery {
+func (awcq *ASUWatchedClassQuery) Where(ps ...predicate.ASUWatchedClass) *ASUWatchedClassQuery {
 	awcq.predicates = append(awcq.predicates, ps...)
 	return awcq
 }
@@ -52,26 +52,26 @@ func (awcq *ASUWatchedClassQuery) Unique(unique bool) *ASUWatchedClassQuery {
 }
 
 // Order specifies how the records should be ordered.
-func (awcq *ASUWatchedClassQuery) Order(o ...asu_watched_class.OrderOption) *ASUWatchedClassQuery {
+func (awcq *ASUWatchedClassQuery) Order(o ...asuwatchedclass.OrderOption) *ASUWatchedClassQuery {
 	awcq.order = append(awcq.order, o...)
 	return awcq
 }
 
-// First returns the first ASU_Watched_Class entity from the query.
-// Returns a *NotFoundError when no ASU_Watched_Class was found.
-func (awcq *ASUWatchedClassQuery) First(ctx context.Context) (*ASU_Watched_Class, error) {
+// First returns the first ASUWatchedClass entity from the query.
+// Returns a *NotFoundError when no ASUWatchedClass was found.
+func (awcq *ASUWatchedClassQuery) First(ctx context.Context) (*ASUWatchedClass, error) {
 	nodes, err := awcq.Limit(1).All(setContextOp(ctx, awcq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{asu_watched_class.Label}
+		return nil, &NotFoundError{asuwatchedclass.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (awcq *ASUWatchedClassQuery) FirstX(ctx context.Context) *ASU_Watched_Class {
+func (awcq *ASUWatchedClassQuery) FirstX(ctx context.Context) *ASUWatchedClass {
 	node, err := awcq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -79,15 +79,15 @@ func (awcq *ASUWatchedClassQuery) FirstX(ctx context.Context) *ASU_Watched_Class
 	return node
 }
 
-// FirstID returns the first ASU_Watched_Class ID from the query.
-// Returns a *NotFoundError when no ASU_Watched_Class ID was found.
+// FirstID returns the first ASUWatchedClass ID from the query.
+// Returns a *NotFoundError when no ASUWatchedClass ID was found.
 func (awcq *ASUWatchedClassQuery) FirstID(ctx context.Context) (id int, err error) {
 	var ids []int
 	if ids, err = awcq.Limit(1).IDs(setContextOp(ctx, awcq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{asu_watched_class.Label}
+		err = &NotFoundError{asuwatchedclass.Label}
 		return
 	}
 	return ids[0], nil
@@ -102,10 +102,10 @@ func (awcq *ASUWatchedClassQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single ASU_Watched_Class entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one ASU_Watched_Class entity is found.
-// Returns a *NotFoundError when no ASU_Watched_Class entities are found.
-func (awcq *ASUWatchedClassQuery) Only(ctx context.Context) (*ASU_Watched_Class, error) {
+// Only returns a single ASUWatchedClass entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one ASUWatchedClass entity is found.
+// Returns a *NotFoundError when no ASUWatchedClass entities are found.
+func (awcq *ASUWatchedClassQuery) Only(ctx context.Context) (*ASUWatchedClass, error) {
 	nodes, err := awcq.Limit(2).All(setContextOp(ctx, awcq.ctx, "Only"))
 	if err != nil {
 		return nil, err
@@ -114,14 +114,14 @@ func (awcq *ASUWatchedClassQuery) Only(ctx context.Context) (*ASU_Watched_Class,
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{asu_watched_class.Label}
+		return nil, &NotFoundError{asuwatchedclass.Label}
 	default:
-		return nil, &NotSingularError{asu_watched_class.Label}
+		return nil, &NotSingularError{asuwatchedclass.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (awcq *ASUWatchedClassQuery) OnlyX(ctx context.Context) *ASU_Watched_Class {
+func (awcq *ASUWatchedClassQuery) OnlyX(ctx context.Context) *ASUWatchedClass {
 	node, err := awcq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -129,8 +129,8 @@ func (awcq *ASUWatchedClassQuery) OnlyX(ctx context.Context) *ASU_Watched_Class 
 	return node
 }
 
-// OnlyID is like Only, but returns the only ASU_Watched_Class ID in the query.
-// Returns a *NotSingularError when more than one ASU_Watched_Class ID is found.
+// OnlyID is like Only, but returns the only ASUWatchedClass ID in the query.
+// Returns a *NotSingularError when more than one ASUWatchedClass ID is found.
 // Returns a *NotFoundError when no entities are found.
 func (awcq *ASUWatchedClassQuery) OnlyID(ctx context.Context) (id int, err error) {
 	var ids []int
@@ -141,9 +141,9 @@ func (awcq *ASUWatchedClassQuery) OnlyID(ctx context.Context) (id int, err error
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{asu_watched_class.Label}
+		err = &NotFoundError{asuwatchedclass.Label}
 	default:
-		err = &NotSingularError{asu_watched_class.Label}
+		err = &NotSingularError{asuwatchedclass.Label}
 	}
 	return
 }
@@ -157,18 +157,18 @@ func (awcq *ASUWatchedClassQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of ASU_Watched_Classes.
-func (awcq *ASUWatchedClassQuery) All(ctx context.Context) ([]*ASU_Watched_Class, error) {
+// All executes the query and returns a list of ASUWatchedClasses.
+func (awcq *ASUWatchedClassQuery) All(ctx context.Context) ([]*ASUWatchedClass, error) {
 	ctx = setContextOp(ctx, awcq.ctx, "All")
 	if err := awcq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*ASU_Watched_Class, *ASUWatchedClassQuery]()
-	return withInterceptors[[]*ASU_Watched_Class](ctx, awcq, qr, awcq.inters)
+	qr := querierAll[[]*ASUWatchedClass, *ASUWatchedClassQuery]()
+	return withInterceptors[[]*ASUWatchedClass](ctx, awcq, qr, awcq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (awcq *ASUWatchedClassQuery) AllX(ctx context.Context) []*ASU_Watched_Class {
+func (awcq *ASUWatchedClassQuery) AllX(ctx context.Context) []*ASUWatchedClass {
 	nodes, err := awcq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -176,13 +176,13 @@ func (awcq *ASUWatchedClassQuery) AllX(ctx context.Context) []*ASU_Watched_Class
 	return nodes
 }
 
-// IDs executes the query and returns a list of ASU_Watched_Class IDs.
+// IDs executes the query and returns a list of ASUWatchedClass IDs.
 func (awcq *ASUWatchedClassQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if awcq.ctx.Unique == nil && awcq.path != nil {
 		awcq.Unique(true)
 	}
 	ctx = setContextOp(ctx, awcq.ctx, "IDs")
-	if err = awcq.Select(asu_watched_class.FieldID).Scan(ctx, &ids); err != nil {
+	if err = awcq.Select(asuwatchedclass.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
@@ -246,9 +246,9 @@ func (awcq *ASUWatchedClassQuery) Clone() *ASUWatchedClassQuery {
 	return &ASUWatchedClassQuery{
 		config:     awcq.config,
 		ctx:        awcq.ctx.Clone(),
-		order:      append([]asu_watched_class.OrderOption{}, awcq.order...),
+		order:      append([]asuwatchedclass.OrderOption{}, awcq.order...),
 		inters:     append([]Interceptor{}, awcq.inters...),
-		predicates: append([]predicate.ASU_Watched_Class{}, awcq.predicates...),
+		predicates: append([]predicate.ASUWatchedClass{}, awcq.predicates...),
 		// clone intermediate query.
 		sql:  awcq.sql.Clone(),
 		path: awcq.path,
@@ -261,19 +261,19 @@ func (awcq *ASUWatchedClassQuery) Clone() *ASUWatchedClassQuery {
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		UserID string `json:"user_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ASUWatchedClass.Query().
-//		GroupBy(asu_watched_class.FieldTitle).
+//		GroupBy(asuwatchedclass.FieldUserID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (awcq *ASUWatchedClassQuery) GroupBy(field string, fields ...string) *ASUWatchedClassGroupBy {
 	awcq.ctx.Fields = append([]string{field}, fields...)
 	grbuild := &ASUWatchedClassGroupBy{build: awcq}
 	grbuild.flds = &awcq.ctx.Fields
-	grbuild.label = asu_watched_class.Label
+	grbuild.label = asuwatchedclass.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -284,16 +284,16 @@ func (awcq *ASUWatchedClassQuery) GroupBy(field string, fields ...string) *ASUWa
 // Example:
 //
 //	var v []struct {
-//		Title string `json:"title,omitempty"`
+//		UserID string `json:"user_id,omitempty"`
 //	}
 //
 //	client.ASUWatchedClass.Query().
-//		Select(asu_watched_class.FieldTitle).
+//		Select(asuwatchedclass.FieldUserID).
 //		Scan(ctx, &v)
 func (awcq *ASUWatchedClassQuery) Select(fields ...string) *ASUWatchedClassSelect {
 	awcq.ctx.Fields = append(awcq.ctx.Fields, fields...)
 	sbuild := &ASUWatchedClassSelect{ASUWatchedClassQuery: awcq}
-	sbuild.label = asu_watched_class.Label
+	sbuild.label = asuwatchedclass.Label
 	sbuild.flds, sbuild.scan = &awcq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
@@ -315,7 +315,7 @@ func (awcq *ASUWatchedClassQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range awcq.ctx.Fields {
-		if !asu_watched_class.ValidColumn(f) {
+		if !asuwatchedclass.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -329,16 +329,16 @@ func (awcq *ASUWatchedClassQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (awcq *ASUWatchedClassQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ASU_Watched_Class, error) {
+func (awcq *ASUWatchedClassQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ASUWatchedClass, error) {
 	var (
-		nodes = []*ASU_Watched_Class{}
+		nodes = []*ASUWatchedClass{}
 		_spec = awcq.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*ASU_Watched_Class).scanValues(nil, columns)
+		return (*ASUWatchedClass).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &ASU_Watched_Class{config: awcq.config}
+		node := &ASUWatchedClass{config: awcq.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
@@ -364,7 +364,7 @@ func (awcq *ASUWatchedClassQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (awcq *ASUWatchedClassQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(asu_watched_class.Table, asu_watched_class.Columns, sqlgraph.NewFieldSpec(asu_watched_class.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewQuerySpec(asuwatchedclass.Table, asuwatchedclass.Columns, sqlgraph.NewFieldSpec(asuwatchedclass.FieldID, field.TypeInt))
 	_spec.From = awcq.sql
 	if unique := awcq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -373,9 +373,9 @@ func (awcq *ASUWatchedClassQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := awcq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, asu_watched_class.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, asuwatchedclass.FieldID)
 		for i := range fields {
-			if fields[i] != asu_watched_class.FieldID {
+			if fields[i] != asuwatchedclass.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -405,10 +405,10 @@ func (awcq *ASUWatchedClassQuery) querySpec() *sqlgraph.QuerySpec {
 
 func (awcq *ASUWatchedClassQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(awcq.driver.Dialect())
-	t1 := builder.Table(asu_watched_class.Table)
+	t1 := builder.Table(asuwatchedclass.Table)
 	columns := awcq.ctx.Fields
 	if len(columns) == 0 {
-		columns = asu_watched_class.Columns
+		columns = asuwatchedclass.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if awcq.sql != nil {
@@ -435,7 +435,7 @@ func (awcq *ASUWatchedClassQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// ASUWatchedClassGroupBy is the group-by builder for ASU_Watched_Class entities.
+// ASUWatchedClassGroupBy is the group-by builder for ASUWatchedClass entities.
 type ASUWatchedClassGroupBy struct {
 	selector
 	build *ASUWatchedClassQuery

@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 	"attendr/watcher/ent/predicate"
 	"context"
 	"errors"
@@ -24,36 +24,36 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeASUWatchedClass = "ASU_Watched_Class"
+	TypeASUWatchedClass = "ASUWatchedClass"
 )
 
-// ASUWatchedClassMutation represents an operation that mutates the ASU_Watched_Class nodes in the graph.
+// ASUWatchedClassMutation represents an operation that mutates the ASUWatchedClass nodes in the graph.
 type ASUWatchedClassMutation struct {
 	config
 	op             Op
 	typ            string
 	id             *int
+	user_id        *string
 	title          *string
 	instructor     *string
 	subject        *string
 	subject_number *string
-	has_open_seats *bool
 	tracked_at     *time.Time
 	class_number   *string
 	term           *string
 	clearedFields  map[string]struct{}
 	done           bool
-	oldValue       func(context.Context) (*ASU_Watched_Class, error)
-	predicates     []predicate.ASU_Watched_Class
+	oldValue       func(context.Context) (*ASUWatchedClass, error)
+	predicates     []predicate.ASUWatchedClass
 }
 
 var _ ent.Mutation = (*ASUWatchedClassMutation)(nil)
 
-// asuWatchedClassOption allows management of the mutation configuration using functional options.
-type asuWatchedClassOption func(*ASUWatchedClassMutation)
+// asuwatchedclassOption allows management of the mutation configuration using functional options.
+type asuwatchedclassOption func(*ASUWatchedClassMutation)
 
-// newASUWatchedClassMutation creates new mutation for the ASU_Watched_Class entity.
-func newASUWatchedClassMutation(c config, op Op, opts ...asuWatchedClassOption) *ASUWatchedClassMutation {
+// newASUWatchedClassMutation creates new mutation for the ASUWatchedClass entity.
+func newASUWatchedClassMutation(c config, op Op, opts ...asuwatchedclassOption) *ASUWatchedClassMutation {
 	m := &ASUWatchedClassMutation{
 		config:        c,
 		op:            op,
@@ -66,20 +66,20 @@ func newASUWatchedClassMutation(c config, op Op, opts ...asuWatchedClassOption) 
 	return m
 }
 
-// withASU_Watched_ClassID sets the ID field of the mutation.
-func withASU_Watched_ClassID(id int) asuWatchedClassOption {
+// withASUWatchedClassID sets the ID field of the mutation.
+func withASUWatchedClassID(id int) asuwatchedclassOption {
 	return func(m *ASUWatchedClassMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *ASU_Watched_Class
+			value *ASUWatchedClass
 		)
-		m.oldValue = func(ctx context.Context) (*ASU_Watched_Class, error) {
+		m.oldValue = func(ctx context.Context) (*ASUWatchedClass, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().ASU_Watched_Class.Get(ctx, id)
+					value, err = m.Client().ASUWatchedClass.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -88,10 +88,10 @@ func withASU_Watched_ClassID(id int) asuWatchedClassOption {
 	}
 }
 
-// withASU_Watched_Class sets the old ASU_Watched_Class of the mutation.
-func withASU_Watched_Class(node *ASU_Watched_Class) asuWatchedClassOption {
+// withASUWatchedClass sets the old ASUWatchedClass of the mutation.
+func withASUWatchedClass(node *ASUWatchedClass) asuwatchedclassOption {
 	return func(m *ASUWatchedClassMutation) {
-		m.oldValue = func(context.Context) (*ASU_Watched_Class, error) {
+		m.oldValue = func(context.Context) (*ASUWatchedClass, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -118,7 +118,7 @@ func (m ASUWatchedClassMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of ASU_Watched_Class entities.
+// operation is only accepted on creation of ASUWatchedClass entities.
 func (m *ASUWatchedClassMutation) SetID(id int) {
 	m.id = &id
 }
@@ -145,10 +145,46 @@ func (m *ASUWatchedClassMutation) IDs(ctx context.Context) ([]int, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().ASU_Watched_Class.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().ASUWatchedClass.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetUserID sets the "user_id" field.
+func (m *ASUWatchedClassMutation) SetUserID(s string) {
+	m.user_id = &s
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *ASUWatchedClassMutation) UserID() (r string, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the ASUWatchedClass entity.
+// If the ASUWatchedClass object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ASUWatchedClassMutation) OldUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *ASUWatchedClassMutation) ResetUserID() {
+	m.user_id = nil
 }
 
 // SetTitle sets the "title" field.
@@ -165,8 +201,8 @@ func (m *ASUWatchedClassMutation) Title() (r string, exists bool) {
 	return *v, true
 }
 
-// OldTitle returns the old "title" field's value of the ASU_Watched_Class entity.
-// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// OldTitle returns the old "title" field's value of the ASUWatchedClass entity.
+// If the ASUWatchedClass object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ASUWatchedClassMutation) OldTitle(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -201,8 +237,8 @@ func (m *ASUWatchedClassMutation) Instructor() (r string, exists bool) {
 	return *v, true
 }
 
-// OldInstructor returns the old "instructor" field's value of the ASU_Watched_Class entity.
-// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// OldInstructor returns the old "instructor" field's value of the ASUWatchedClass entity.
+// If the ASUWatchedClass object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ASUWatchedClassMutation) OldInstructor(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -237,8 +273,8 @@ func (m *ASUWatchedClassMutation) Subject() (r string, exists bool) {
 	return *v, true
 }
 
-// OldSubject returns the old "subject" field's value of the ASU_Watched_Class entity.
-// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// OldSubject returns the old "subject" field's value of the ASUWatchedClass entity.
+// If the ASUWatchedClass object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ASUWatchedClassMutation) OldSubject(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -273,8 +309,8 @@ func (m *ASUWatchedClassMutation) SubjectNumber() (r string, exists bool) {
 	return *v, true
 }
 
-// OldSubjectNumber returns the old "subject_number" field's value of the ASU_Watched_Class entity.
-// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// OldSubjectNumber returns the old "subject_number" field's value of the ASUWatchedClass entity.
+// If the ASUWatchedClass object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ASUWatchedClassMutation) OldSubjectNumber(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -295,42 +331,6 @@ func (m *ASUWatchedClassMutation) ResetSubjectNumber() {
 	m.subject_number = nil
 }
 
-// SetHasOpenSeats sets the "has_open_seats" field.
-func (m *ASUWatchedClassMutation) SetHasOpenSeats(b bool) {
-	m.has_open_seats = &b
-}
-
-// HasOpenSeats returns the value of the "has_open_seats" field in the mutation.
-func (m *ASUWatchedClassMutation) HasOpenSeats() (r bool, exists bool) {
-	v := m.has_open_seats
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldHasOpenSeats returns the old "has_open_seats" field's value of the ASU_Watched_Class entity.
-// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ASUWatchedClassMutation) OldHasOpenSeats(ctx context.Context) (v bool, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldHasOpenSeats is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldHasOpenSeats requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldHasOpenSeats: %w", err)
-	}
-	return oldValue.HasOpenSeats, nil
-}
-
-// ResetHasOpenSeats resets all changes to the "has_open_seats" field.
-func (m *ASUWatchedClassMutation) ResetHasOpenSeats() {
-	m.has_open_seats = nil
-}
-
 // SetTrackedAt sets the "tracked_at" field.
 func (m *ASUWatchedClassMutation) SetTrackedAt(t time.Time) {
 	m.tracked_at = &t
@@ -345,8 +345,8 @@ func (m *ASUWatchedClassMutation) TrackedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldTrackedAt returns the old "tracked_at" field's value of the ASU_Watched_Class entity.
-// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// OldTrackedAt returns the old "tracked_at" field's value of the ASUWatchedClass entity.
+// If the ASUWatchedClass object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ASUWatchedClassMutation) OldTrackedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -362,9 +362,22 @@ func (m *ASUWatchedClassMutation) OldTrackedAt(ctx context.Context) (v time.Time
 	return oldValue.TrackedAt, nil
 }
 
+// ClearTrackedAt clears the value of the "tracked_at" field.
+func (m *ASUWatchedClassMutation) ClearTrackedAt() {
+	m.tracked_at = nil
+	m.clearedFields[asuwatchedclass.FieldTrackedAt] = struct{}{}
+}
+
+// TrackedAtCleared returns if the "tracked_at" field was cleared in this mutation.
+func (m *ASUWatchedClassMutation) TrackedAtCleared() bool {
+	_, ok := m.clearedFields[asuwatchedclass.FieldTrackedAt]
+	return ok
+}
+
 // ResetTrackedAt resets all changes to the "tracked_at" field.
 func (m *ASUWatchedClassMutation) ResetTrackedAt() {
 	m.tracked_at = nil
+	delete(m.clearedFields, asuwatchedclass.FieldTrackedAt)
 }
 
 // SetClassNumber sets the "class_number" field.
@@ -381,8 +394,8 @@ func (m *ASUWatchedClassMutation) ClassNumber() (r string, exists bool) {
 	return *v, true
 }
 
-// OldClassNumber returns the old "class_number" field's value of the ASU_Watched_Class entity.
-// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// OldClassNumber returns the old "class_number" field's value of the ASUWatchedClass entity.
+// If the ASUWatchedClass object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ASUWatchedClassMutation) OldClassNumber(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -417,8 +430,8 @@ func (m *ASUWatchedClassMutation) Term() (r string, exists bool) {
 	return *v, true
 }
 
-// OldTerm returns the old "term" field's value of the ASU_Watched_Class entity.
-// If the ASU_Watched_Class object wasn't provided to the builder, the object is fetched from the database.
+// OldTerm returns the old "term" field's value of the ASUWatchedClass entity.
+// If the ASUWatchedClass object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
 func (m *ASUWatchedClassMutation) OldTerm(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
@@ -440,14 +453,14 @@ func (m *ASUWatchedClassMutation) ResetTerm() {
 }
 
 // Where appends a list predicates to the ASUWatchedClassMutation builder.
-func (m *ASUWatchedClassMutation) Where(ps ...predicate.ASU_Watched_Class) {
+func (m *ASUWatchedClassMutation) Where(ps ...predicate.ASUWatchedClass) {
 	m.predicates = append(m.predicates, ps...)
 }
 
 // WhereP appends storage-level predicates to the ASUWatchedClassMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
 func (m *ASUWatchedClassMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.ASU_Watched_Class, len(ps))
+	p := make([]predicate.ASUWatchedClass, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -464,7 +477,7 @@ func (m *ASUWatchedClassMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (ASU_Watched_Class).
+// Type returns the node type of this mutation (ASUWatchedClass).
 func (m *ASUWatchedClassMutation) Type() string {
 	return m.typ
 }
@@ -474,29 +487,29 @@ func (m *ASUWatchedClassMutation) Type() string {
 // AddedFields().
 func (m *ASUWatchedClassMutation) Fields() []string {
 	fields := make([]string, 0, 8)
+	if m.user_id != nil {
+		fields = append(fields, asuwatchedclass.FieldUserID)
+	}
 	if m.title != nil {
-		fields = append(fields, asu_watched_class.FieldTitle)
+		fields = append(fields, asuwatchedclass.FieldTitle)
 	}
 	if m.instructor != nil {
-		fields = append(fields, asu_watched_class.FieldInstructor)
+		fields = append(fields, asuwatchedclass.FieldInstructor)
 	}
 	if m.subject != nil {
-		fields = append(fields, asu_watched_class.FieldSubject)
+		fields = append(fields, asuwatchedclass.FieldSubject)
 	}
 	if m.subject_number != nil {
-		fields = append(fields, asu_watched_class.FieldSubjectNumber)
-	}
-	if m.has_open_seats != nil {
-		fields = append(fields, asu_watched_class.FieldHasOpenSeats)
+		fields = append(fields, asuwatchedclass.FieldSubjectNumber)
 	}
 	if m.tracked_at != nil {
-		fields = append(fields, asu_watched_class.FieldTrackedAt)
+		fields = append(fields, asuwatchedclass.FieldTrackedAt)
 	}
 	if m.class_number != nil {
-		fields = append(fields, asu_watched_class.FieldClassNumber)
+		fields = append(fields, asuwatchedclass.FieldClassNumber)
 	}
 	if m.term != nil {
-		fields = append(fields, asu_watched_class.FieldTerm)
+		fields = append(fields, asuwatchedclass.FieldTerm)
 	}
 	return fields
 }
@@ -506,21 +519,21 @@ func (m *ASUWatchedClassMutation) Fields() []string {
 // schema.
 func (m *ASUWatchedClassMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case asu_watched_class.FieldTitle:
+	case asuwatchedclass.FieldUserID:
+		return m.UserID()
+	case asuwatchedclass.FieldTitle:
 		return m.Title()
-	case asu_watched_class.FieldInstructor:
+	case asuwatchedclass.FieldInstructor:
 		return m.Instructor()
-	case asu_watched_class.FieldSubject:
+	case asuwatchedclass.FieldSubject:
 		return m.Subject()
-	case asu_watched_class.FieldSubjectNumber:
+	case asuwatchedclass.FieldSubjectNumber:
 		return m.SubjectNumber()
-	case asu_watched_class.FieldHasOpenSeats:
-		return m.HasOpenSeats()
-	case asu_watched_class.FieldTrackedAt:
+	case asuwatchedclass.FieldTrackedAt:
 		return m.TrackedAt()
-	case asu_watched_class.FieldClassNumber:
+	case asuwatchedclass.FieldClassNumber:
 		return m.ClassNumber()
-	case asu_watched_class.FieldTerm:
+	case asuwatchedclass.FieldTerm:
 		return m.Term()
 	}
 	return nil, false
@@ -531,24 +544,24 @@ func (m *ASUWatchedClassMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ASUWatchedClassMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case asu_watched_class.FieldTitle:
+	case asuwatchedclass.FieldUserID:
+		return m.OldUserID(ctx)
+	case asuwatchedclass.FieldTitle:
 		return m.OldTitle(ctx)
-	case asu_watched_class.FieldInstructor:
+	case asuwatchedclass.FieldInstructor:
 		return m.OldInstructor(ctx)
-	case asu_watched_class.FieldSubject:
+	case asuwatchedclass.FieldSubject:
 		return m.OldSubject(ctx)
-	case asu_watched_class.FieldSubjectNumber:
+	case asuwatchedclass.FieldSubjectNumber:
 		return m.OldSubjectNumber(ctx)
-	case asu_watched_class.FieldHasOpenSeats:
-		return m.OldHasOpenSeats(ctx)
-	case asu_watched_class.FieldTrackedAt:
+	case asuwatchedclass.FieldTrackedAt:
 		return m.OldTrackedAt(ctx)
-	case asu_watched_class.FieldClassNumber:
+	case asuwatchedclass.FieldClassNumber:
 		return m.OldClassNumber(ctx)
-	case asu_watched_class.FieldTerm:
+	case asuwatchedclass.FieldTerm:
 		return m.OldTerm(ctx)
 	}
-	return nil, fmt.Errorf("unknown ASU_Watched_Class field %s", name)
+	return nil, fmt.Errorf("unknown ASUWatchedClass field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
@@ -556,56 +569,56 @@ func (m *ASUWatchedClassMutation) OldField(ctx context.Context, name string) (en
 // type.
 func (m *ASUWatchedClassMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case asu_watched_class.FieldTitle:
+	case asuwatchedclass.FieldUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case asuwatchedclass.FieldTitle:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTitle(v)
 		return nil
-	case asu_watched_class.FieldInstructor:
+	case asuwatchedclass.FieldInstructor:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetInstructor(v)
 		return nil
-	case asu_watched_class.FieldSubject:
+	case asuwatchedclass.FieldSubject:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSubject(v)
 		return nil
-	case asu_watched_class.FieldSubjectNumber:
+	case asuwatchedclass.FieldSubjectNumber:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSubjectNumber(v)
 		return nil
-	case asu_watched_class.FieldHasOpenSeats:
-		v, ok := value.(bool)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetHasOpenSeats(v)
-		return nil
-	case asu_watched_class.FieldTrackedAt:
+	case asuwatchedclass.FieldTrackedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetTrackedAt(v)
 		return nil
-	case asu_watched_class.FieldClassNumber:
+	case asuwatchedclass.FieldClassNumber:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetClassNumber(v)
 		return nil
-	case asu_watched_class.FieldTerm:
+	case asuwatchedclass.FieldTerm:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -613,7 +626,7 @@ func (m *ASUWatchedClassMutation) SetField(name string, value ent.Value) error {
 		m.SetTerm(v)
 		return nil
 	}
-	return fmt.Errorf("unknown ASU_Watched_Class field %s", name)
+	return fmt.Errorf("unknown ASUWatchedClass field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
@@ -635,13 +648,17 @@ func (m *ASUWatchedClassMutation) AddedField(name string) (ent.Value, bool) {
 func (m *ASUWatchedClassMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown ASU_Watched_Class numeric field %s", name)
+	return fmt.Errorf("unknown ASUWatchedClass numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *ASUWatchedClassMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(asuwatchedclass.FieldTrackedAt) {
+		fields = append(fields, asuwatchedclass.FieldTrackedAt)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -654,39 +671,44 @@ func (m *ASUWatchedClassMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *ASUWatchedClassMutation) ClearField(name string) error {
-	return fmt.Errorf("unknown ASU_Watched_Class nullable field %s", name)
+	switch name {
+	case asuwatchedclass.FieldTrackedAt:
+		m.ClearTrackedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown ASUWatchedClass nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
 func (m *ASUWatchedClassMutation) ResetField(name string) error {
 	switch name {
-	case asu_watched_class.FieldTitle:
+	case asuwatchedclass.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case asuwatchedclass.FieldTitle:
 		m.ResetTitle()
 		return nil
-	case asu_watched_class.FieldInstructor:
+	case asuwatchedclass.FieldInstructor:
 		m.ResetInstructor()
 		return nil
-	case asu_watched_class.FieldSubject:
+	case asuwatchedclass.FieldSubject:
 		m.ResetSubject()
 		return nil
-	case asu_watched_class.FieldSubjectNumber:
+	case asuwatchedclass.FieldSubjectNumber:
 		m.ResetSubjectNumber()
 		return nil
-	case asu_watched_class.FieldHasOpenSeats:
-		m.ResetHasOpenSeats()
-		return nil
-	case asu_watched_class.FieldTrackedAt:
+	case asuwatchedclass.FieldTrackedAt:
 		m.ResetTrackedAt()
 		return nil
-	case asu_watched_class.FieldClassNumber:
+	case asuwatchedclass.FieldClassNumber:
 		m.ResetClassNumber()
 		return nil
-	case asu_watched_class.FieldTerm:
+	case asuwatchedclass.FieldTerm:
 		m.ResetTerm()
 		return nil
 	}
-	return fmt.Errorf("unknown ASU_Watched_Class field %s", name)
+	return fmt.Errorf("unknown ASUWatchedClass field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
@@ -728,11 +750,11 @@ func (m *ASUWatchedClassMutation) EdgeCleared(name string) bool {
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *ASUWatchedClassMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown ASU_Watched_Class unique edge %s", name)
+	return fmt.Errorf("unknown ASUWatchedClass unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *ASUWatchedClassMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown ASU_Watched_Class edge %s", name)
+	return fmt.Errorf("unknown ASUWatchedClass edge %s", name)
 }

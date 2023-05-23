@@ -2,15 +2,19 @@
 //  - Add email and phone number Class Tracking DB table
 //  - Add functions to add & remove user notification preferences to DB
 //      In general track email and phone number to send notifications to
+//  - Refactor close and open connection to happen in every function
+//      This is because we want to multithread the database calls
+//  - Integrate Clerk User ID's into DB
 
 package database
 
 import (
 	"attendr/watcher/ent"
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 	"attendr/watcher/utils"
 	"attendr/watcher/utils/asu"
 	"context"
+	"fmt"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -33,18 +37,15 @@ func InitDbConnection() {
 	}
 	databaseUrl = os.Getenv("DSN")
 
-	// Open a connection to the database
+	// Test a connection to the database
 	Client, err = ent.Open("mysql", databaseUrl)
 	if err != nil {
 		utils.Logger.Error("Failed opening connection to db", "err", err)
 	}
 	defer Client.Close()
 
-	// Run the auto migration tool
-	schema_err := Client.Schema.Create(context.Background())
-	if schema_err != nil {
-		utils.Logger.Error("Failed creating schema resources", "err", schema_err)
-	}
+	// Normally we would run the schema migration tool from Ent here
+	// But we are using prisma to manage DB schema migrations
 
 	utils.Logger.Debug("Finished initializing the database")
 }
@@ -66,61 +67,16 @@ func closeConnection() {
 }
 
 /*
-* Syncs the watchlist to the database
-* NOTE: Not sure if this is needed as classes are added to DB when POSTed
-* Currently its not being called anywhere
-**/
-func SyncWatchlistToDb(ctx context.Context, classes []ent.ASU_Watched_Class) error {
-	openConnection()
-	defer closeConnection()
-
-	var error error = nil
-
-	// Querying to check if it exists
-	// If it does not exist then create it
-	for _, localClass := range classes {
-		exists, err := Client.ASU_Watched_Class.
-			Query().
-			Where(asu_watched_class.ClassNumber(localClass.ClassNumber)).
-			Exist(ctx)
-		if err != nil {
-			utils.Logger.Error("Error checking if class exists", "err", err)
-			error = err
-		}
-
-		if !exists {
-			_, err := Client.ASU_Watched_Class.
-				Create().
-				SetTitle(localClass.Title).
-				SetInstructor(localClass.Instructor).
-				SetSubject(localClass.Subject).
-				SetSubjectNumber(localClass.SubjectNumber).
-				SetHasOpenSeats(localClass.HasOpenSeats).
-				SetClassNumber(localClass.ClassNumber).
-				SetTerm(localClass.Term).
-				Save(ctx)
-			if err != nil {
-				utils.Logger.Error("Error syncing classes to db", "err", err)
-				error = err
-			}
-		}
-	}
-
-	utils.Logger.Debug("Finished syncing watchlist to db")
-	return error
-}
-
-/*
 * Grabs the watchlist from the database
 **/
 func GrabWatchListFromDb(ctx context.Context) (
-	[]*ent.ASU_Watched_Class,
+	[]*ent.ASUWatchedClass,
 	error,
 ) {
 	openConnection()
 	defer closeConnection()
 
-	watchlist, err := Client.ASU_Watched_Class.Query().All(ctx)
+	watchlist, err := Client.ASUWatchedClass.Query().All(ctx)
 	if err != nil {
 		utils.Logger.Error("Error grabbing watchlist from db", "err", err)
 	}
@@ -132,7 +88,7 @@ func GrabWatchListFromDb(ctx context.Context) (
 /*
 * Adds a class to the database
 **/
-func AddClassToDb(ctx context.Context, class *asu.ApiResponse) (*ent.ASU_Watched_Class, error) {
+func AddClassToDb(ctx context.Context, class *asu.ApiResponse) (*ent.ASUWatchedClass, error) {
 	openConnection()
 	defer closeConnection()
 
@@ -142,30 +98,27 @@ func AddClassToDb(ctx context.Context, class *asu.ApiResponse) (*ent.ASU_Watched
 		title = title + " Recitation"
 	}
 
-	// Add class to Db
-	addedClass, err := Client.ASU_Watched_Class.
+	// Check if class is already in DB
+	existingClass, _ := Client.ASUWatchedClass.
+		Query().
+		Where(asuwatchedclass.ClassNumber(class.Classes[0].Clas.Classnbr)).
+		First(ctx)
+	if existingClass != nil {
+		utils.Logger.Debug("Class already exists in DB", "class", existingClass)
+		return nil, fmt.Errorf("Class already exists in DB")
+	}
+
+	// Add class to DB
+	addedClass, err := Client.ASUWatchedClass.
 		Create().
 		SetTitle(title).
+		SetUserID("DebugUserID"). // NOTE: GET RID OF THIS
 		SetInstructor(class.Classes[0].Clas.Instructorslist[0]).
 		SetSubject(class.Classes[0].Clas.Subject).
 		SetSubjectNumber(class.Classes[0].Clas.Catalognbr).
-		SetHasOpenSeats(false).
 		SetClassNumber(class.Classes[0].Clas.Classnbr).
 		SetTerm(class.Classes[0].Clas.Strm).
 		Save(ctx)
-
-		// Check constraint error (if class already exists)
-	if ent.IsConstraintError(err) {
-		utils.Logger.Debug("Class already exists in watchlist database")
-		existingClass, _ := Client.ASU_Watched_Class.
-			Query().
-			Where(asu_watched_class.ClassNumber(class.Classes[0].Clas.Classnbr)).
-			First(ctx)
-
-		return existingClass, nil
-	}
-
-	// Check general error
 	if err != nil {
 		utils.Logger.Error("Error adding to watchlist", "err", err)
 		return nil, err
@@ -179,12 +132,12 @@ func AddClassToDb(ctx context.Context, class *asu.ApiResponse) (*ent.ASU_Watched
 * Removes a class from the database
 **/
 func RemoveClassFromDb(ctx context.Context,
-	classToDelete *ent.ASU_Watched_Class,
+	classToDelete *ent.ASUWatchedClass,
 ) error {
 	openConnection()
 	defer closeConnection()
 
-	err := Client.ASU_Watched_Class.
+	err := Client.ASUWatchedClass.
 		DeleteOne(classToDelete).
 		Exec(ctx)
 	if err != nil {
@@ -199,14 +152,14 @@ func RemoveClassFromDb(ctx context.Context,
 * Get a class by ClassNumber
 **/
 func GetClassFromDbByClassNbr(ctx context.Context, nbr string) (
-	*ent.ASU_Watched_Class,
+	*ent.ASUWatchedClass,
 	error,
 ) {
 	openConnection()
 	defer closeConnection()
 
-	class, err := Client.ASU_Watched_Class.Query().
-		Where(asu_watched_class.ClassNumber(nbr)).
+	class, err := Client.ASUWatchedClass.Query().
+		Where(asuwatchedclass.ClassNumber(nbr)).
 		First(ctx)
 	if err != nil {
 		utils.Logger.Error("Error grabbing class from db", "err", err)
@@ -226,11 +179,53 @@ func RemoveClassFromDbByClassNbr(ctx context.Context, nbr string) (
 	openConnection()
 	defer closeConnection()
 
-	classNbr, err := Client.ASU_Watched_Class.Delete().Where(asu_watched_class.ClassNumber(nbr)).Exec(ctx)
+	classNbr, err := Client.ASUWatchedClass.Delete().Where(asuwatchedclass.ClassNumber(nbr)).Exec(ctx)
 	if err != nil {
 		utils.Logger.Error("Error deleting class from db", "err", err)
 		return -1, err
 	}
 
 	return classNbr, nil
+}
+
+/*
+* NOTE: DEPRECATED DO NOT USE
+**/
+func SyncWatchlistToDb(ctx context.Context, classes []ent.ASUWatchedClass) error {
+	openConnection()
+	defer closeConnection()
+
+	var error error = nil
+
+	// Querying to check if it exists
+	// If it does not exist then create it
+	for _, localClass := range classes {
+		exists, err := Client.ASUWatchedClass.
+			Query().
+			Where(asuwatchedclass.ClassNumber(localClass.ClassNumber)).
+			Exist(ctx)
+		if err != nil {
+			utils.Logger.Error("Error checking if class exists", "err", err)
+			error = err
+		}
+
+		if !exists {
+			_, err := Client.ASUWatchedClass.
+				Create().
+				SetTitle(localClass.Title).
+				SetInstructor(localClass.Instructor).
+				SetSubject(localClass.Subject).
+				SetSubjectNumber(localClass.SubjectNumber).
+				SetClassNumber(localClass.ClassNumber).
+				SetTerm(localClass.Term).
+				Save(ctx)
+			if err != nil {
+				utils.Logger.Error("Error syncing classes to db", "err", err)
+				error = err
+			}
+		}
+	}
+
+	utils.Logger.Debug("Finished syncing watchlist to db")
+	return error
 }

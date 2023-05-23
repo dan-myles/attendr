@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 	"context"
 	"errors"
 	"fmt"
@@ -73,7 +73,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			asu_watched_class.Table: asu_watched_class.ValidColumn,
+			asuwatchedclass.Table: asuwatchedclass.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

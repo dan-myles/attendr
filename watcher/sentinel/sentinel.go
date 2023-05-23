@@ -1,5 +1,5 @@
 // TODO:
-// - Handle finding open seats
+// - Handle finding open seats:
 //    Seat is found ~ send notification & remove from DB + Watchlist
 //    Seat is not found ~ do nothing and scrape it again later
 
@@ -24,7 +24,7 @@ import (
 )
 
 var (
-	Watchlist       []*ent.ASU_Watched_Class
+	Watchlist       []*ent.ASUWatchedClass
 	Scraping        bool   = false
 	asuApiUrl       string = ""
 	workerInterval  int    = 125 // Milliseconds
@@ -153,7 +153,7 @@ func StartSentinel(wg *sync.WaitGroup) {
 func checkClasses() {
 	// Check if there are any classes to check
 	if len(Watchlist) <= 0 {
-		utils.Logger.Error("No classes found in Watchlist")
+		utils.Logger.Info("No classes found in Watchlist")
 		return
 	}
 
@@ -175,7 +175,7 @@ func checkClasses() {
 
 		// Grab class & start worker
 		classToScrape := Watchlist[i]
-		go func(class *ent.ASU_Watched_Class) {
+		go func(class *ent.ASUWatchedClass) {
 			defer wg.Done()
 
 			res, err := GrabClassInfo(class.Term, class.ClassNumber)

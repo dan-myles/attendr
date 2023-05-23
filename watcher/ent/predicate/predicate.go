@@ -6,5 +6,5 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ASU_Watched_Class is the predicate function for asu_watched_class builders.
-type ASU_Watched_Class func(*sql.Selector)
+// ASUWatchedClass is the predicate function for asuwatchedclass builders.
+type ASUWatchedClass func(*sql.Selector)

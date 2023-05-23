@@ -8,12 +8,12 @@ import (
 	"fmt"
 )
 
-// The ASU_Watched_ClassFunc type is an adapter to allow the use of ordinary
-// function as ASU_Watched_Class mutator.
-type ASU_Watched_ClassFunc func(context.Context, *ent.ASUWatchedClassMutation) (ent.Value, error)
+// The ASUWatchedClassFunc type is an adapter to allow the use of ordinary
+// function as ASUWatchedClass mutator.
+type ASUWatchedClassFunc func(context.Context, *ent.ASUWatchedClassMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ASU_Watched_ClassFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+func (f ASUWatchedClassFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
 	if mv, ok := m.(*ent.ASUWatchedClassMutation); ok {
 		return f(ctx, mv)
 	}

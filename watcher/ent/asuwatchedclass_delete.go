@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 	"attendr/watcher/ent/predicate"
 	"context"
 
@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ASUWatchedClassDelete is the builder for deleting a ASU_Watched_Class entity.
+// ASUWatchedClassDelete is the builder for deleting a ASUWatchedClass entity.
 type ASUWatchedClassDelete struct {
 	config
 	hooks    []Hook
@@ -20,7 +20,7 @@ type ASUWatchedClassDelete struct {
 }
 
 // Where appends a list predicates to the ASUWatchedClassDelete builder.
-func (awcd *ASUWatchedClassDelete) Where(ps ...predicate.ASU_Watched_Class) *ASUWatchedClassDelete {
+func (awcd *ASUWatchedClassDelete) Where(ps ...predicate.ASUWatchedClass) *ASUWatchedClassDelete {
 	awcd.mutation.Where(ps...)
 	return awcd
 }
@@ -40,7 +40,7 @@ func (awcd *ASUWatchedClassDelete) ExecX(ctx context.Context) int {
 }
 
 func (awcd *ASUWatchedClassDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(asu_watched_class.Table, sqlgraph.NewFieldSpec(asu_watched_class.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewDeleteSpec(asuwatchedclass.Table, sqlgraph.NewFieldSpec(asuwatchedclass.FieldID, field.TypeInt))
 	if ps := awcd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,13 +56,13 @@ func (awcd *ASUWatchedClassDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// ASUWatchedClassDeleteOne is the builder for deleting a single ASU_Watched_Class entity.
+// ASUWatchedClassDeleteOne is the builder for deleting a single ASUWatchedClass entity.
 type ASUWatchedClassDeleteOne struct {
 	awcd *ASUWatchedClassDelete
 }
 
 // Where appends a list predicates to the ASUWatchedClassDelete builder.
-func (awcdo *ASUWatchedClassDeleteOne) Where(ps ...predicate.ASU_Watched_Class) *ASUWatchedClassDeleteOne {
+func (awcdo *ASUWatchedClassDeleteOne) Where(ps ...predicate.ASUWatchedClass) *ASUWatchedClassDeleteOne {
 	awcdo.awcd.mutation.Where(ps...)
 	return awcdo
 }
@@ -74,7 +74,7 @@ func (awcdo *ASUWatchedClassDeleteOne) Exec(ctx context.Context) error {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{asu_watched_class.Label}
+		return &NotFoundError{asuwatchedclass.Label}
 	default:
 		return nil
 	}

@@ -1,5 +1,5 @@
 // TODO:
-// - Add email & phone number to DB
+// - Add email & phone number to DB (probably a new table)
 // - Add GET route to get watched classes for a certain user
 // - Fix the DELETE route to:
 //    First delete the users notification preferences

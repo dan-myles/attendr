@@ -3,34 +3,38 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
 
 var (
-	// AsuWatchedClassesColumns holds the columns for the "asu_watched_classes" table.
-	AsuWatchedClassesColumns = []*schema.Column{
+	// ASUWatchedClassesColumns holds the columns for the "ASU_Watched_Classes" table.
+	ASUWatchedClassesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "user_id", Type: field.TypeString},
 		{Name: "title", Type: field.TypeString},
 		{Name: "instructor", Type: field.TypeString},
 		{Name: "subject", Type: field.TypeString},
 		{Name: "subject_number", Type: field.TypeString},
-		{Name: "has_open_seats", Type: field.TypeBool, Default: false},
-		{Name: "tracked_at", Type: field.TypeTime},
-		{Name: "class_number", Type: field.TypeString, Unique: true},
+		{Name: "tracked_at", Type: field.TypeTime, Nullable: true},
+		{Name: "class_number", Type: field.TypeString},
 		{Name: "term", Type: field.TypeString},
 	}
-	// AsuWatchedClassesTable holds the schema information for the "asu_watched_classes" table.
-	AsuWatchedClassesTable = &schema.Table{
-		Name:       "asu_watched_classes",
-		Columns:    AsuWatchedClassesColumns,
-		PrimaryKey: []*schema.Column{AsuWatchedClassesColumns[0]},
+	// ASUWatchedClassesTable holds the schema information for the "ASU_Watched_Classes" table.
+	ASUWatchedClassesTable = &schema.Table{
+		Name:       "ASU_Watched_Classes",
+		Columns:    ASUWatchedClassesColumns,
+		PrimaryKey: []*schema.Column{ASUWatchedClassesColumns[0]},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		AsuWatchedClassesTable,
+		ASUWatchedClassesTable,
 	}
 )
 
 func init() {
+	ASUWatchedClassesTable.Annotation = &entsql.Annotation{
+		Table: "ASU_Watched_Classes",
+	}
 }

@@ -18,10 +18,11 @@ func main() {
 	// Initialize the sentinel
 	sentinel.InitSentinel()
 
-	// Start the sentinel
+	// Initialize the waitgroup
 	var wg sync.WaitGroup
-	wg.Add(1)
 
+	// Start the sentinel
+	wg.Add(1)
 	go sentinel.StartSentinel(&wg)
 
 	// Start the webserver

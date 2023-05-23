@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 	"context"
 	"errors"
 	"fmt"
@@ -13,11 +13,17 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ASUWatchedClassCreate is the builder for creating a ASU_Watched_Class entity.
+// ASUWatchedClassCreate is the builder for creating a ASUWatchedClass entity.
 type ASUWatchedClassCreate struct {
 	config
 	mutation *ASUWatchedClassMutation
 	hooks    []Hook
+}
+
+// SetUserID sets the "user_id" field.
+func (awcc *ASUWatchedClassCreate) SetUserID(s string) *ASUWatchedClassCreate {
+	awcc.mutation.SetUserID(s)
+	return awcc
 }
 
 // SetTitle sets the "title" field.
@@ -41,20 +47,6 @@ func (awcc *ASUWatchedClassCreate) SetSubject(s string) *ASUWatchedClassCreate {
 // SetSubjectNumber sets the "subject_number" field.
 func (awcc *ASUWatchedClassCreate) SetSubjectNumber(s string) *ASUWatchedClassCreate {
 	awcc.mutation.SetSubjectNumber(s)
-	return awcc
-}
-
-// SetHasOpenSeats sets the "has_open_seats" field.
-func (awcc *ASUWatchedClassCreate) SetHasOpenSeats(b bool) *ASUWatchedClassCreate {
-	awcc.mutation.SetHasOpenSeats(b)
-	return awcc
-}
-
-// SetNillableHasOpenSeats sets the "has_open_seats" field if the given value is not nil.
-func (awcc *ASUWatchedClassCreate) SetNillableHasOpenSeats(b *bool) *ASUWatchedClassCreate {
-	if b != nil {
-		awcc.SetHasOpenSeats(*b)
-	}
 	return awcc
 }
 
@@ -95,14 +87,13 @@ func (awcc *ASUWatchedClassCreate) Mutation() *ASUWatchedClassMutation {
 	return awcc.mutation
 }
 
-// Save creates the ASU_Watched_Class in the database.
-func (awcc *ASUWatchedClassCreate) Save(ctx context.Context) (*ASU_Watched_Class, error) {
-	awcc.defaults()
+// Save creates the ASUWatchedClass in the database.
+func (awcc *ASUWatchedClassCreate) Save(ctx context.Context) (*ASUWatchedClass, error) {
 	return withHooks(ctx, awcc.sqlSave, awcc.mutation, awcc.hooks)
 }
 
 // SaveX calls Save and panics if Save returns an error.
-func (awcc *ASUWatchedClassCreate) SaveX(ctx context.Context) *ASU_Watched_Class {
+func (awcc *ASUWatchedClassCreate) SaveX(ctx context.Context) *ASUWatchedClass {
 	v, err := awcc.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -123,48 +114,33 @@ func (awcc *ASUWatchedClassCreate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (awcc *ASUWatchedClassCreate) defaults() {
-	if _, ok := awcc.mutation.HasOpenSeats(); !ok {
-		v := asu_watched_class.DefaultHasOpenSeats
-		awcc.mutation.SetHasOpenSeats(v)
-	}
-	if _, ok := awcc.mutation.TrackedAt(); !ok {
-		v := asu_watched_class.DefaultTrackedAt()
-		awcc.mutation.SetTrackedAt(v)
-	}
-}
-
 // check runs all checks and user-defined validators on the builder.
 func (awcc *ASUWatchedClassCreate) check() error {
+	if _, ok := awcc.mutation.UserID(); !ok {
+		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "ASUWatchedClass.user_id"`)}
+	}
 	if _, ok := awcc.mutation.Title(); !ok {
-		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "ASU_Watched_Class.title"`)}
+		return &ValidationError{Name: "title", err: errors.New(`ent: missing required field "ASUWatchedClass.title"`)}
 	}
 	if _, ok := awcc.mutation.Instructor(); !ok {
-		return &ValidationError{Name: "instructor", err: errors.New(`ent: missing required field "ASU_Watched_Class.instructor"`)}
+		return &ValidationError{Name: "instructor", err: errors.New(`ent: missing required field "ASUWatchedClass.instructor"`)}
 	}
 	if _, ok := awcc.mutation.Subject(); !ok {
-		return &ValidationError{Name: "subject", err: errors.New(`ent: missing required field "ASU_Watched_Class.subject"`)}
+		return &ValidationError{Name: "subject", err: errors.New(`ent: missing required field "ASUWatchedClass.subject"`)}
 	}
 	if _, ok := awcc.mutation.SubjectNumber(); !ok {
-		return &ValidationError{Name: "subject_number", err: errors.New(`ent: missing required field "ASU_Watched_Class.subject_number"`)}
-	}
-	if _, ok := awcc.mutation.HasOpenSeats(); !ok {
-		return &ValidationError{Name: "has_open_seats", err: errors.New(`ent: missing required field "ASU_Watched_Class.has_open_seats"`)}
-	}
-	if _, ok := awcc.mutation.TrackedAt(); !ok {
-		return &ValidationError{Name: "tracked_at", err: errors.New(`ent: missing required field "ASU_Watched_Class.tracked_at"`)}
+		return &ValidationError{Name: "subject_number", err: errors.New(`ent: missing required field "ASUWatchedClass.subject_number"`)}
 	}
 	if _, ok := awcc.mutation.ClassNumber(); !ok {
-		return &ValidationError{Name: "class_number", err: errors.New(`ent: missing required field "ASU_Watched_Class.class_number"`)}
+		return &ValidationError{Name: "class_number", err: errors.New(`ent: missing required field "ASUWatchedClass.class_number"`)}
 	}
 	if _, ok := awcc.mutation.Term(); !ok {
-		return &ValidationError{Name: "term", err: errors.New(`ent: missing required field "ASU_Watched_Class.term"`)}
+		return &ValidationError{Name: "term", err: errors.New(`ent: missing required field "ASUWatchedClass.term"`)}
 	}
 	return nil
 }
 
-func (awcc *ASUWatchedClassCreate) sqlSave(ctx context.Context) (*ASU_Watched_Class, error) {
+func (awcc *ASUWatchedClassCreate) sqlSave(ctx context.Context) (*ASUWatchedClass, error) {
 	if err := awcc.check(); err != nil {
 		return nil, err
 	}
@@ -184,65 +160,64 @@ func (awcc *ASUWatchedClassCreate) sqlSave(ctx context.Context) (*ASU_Watched_Cl
 	return _node, nil
 }
 
-func (awcc *ASUWatchedClassCreate) createSpec() (*ASU_Watched_Class, *sqlgraph.CreateSpec) {
+func (awcc *ASUWatchedClassCreate) createSpec() (*ASUWatchedClass, *sqlgraph.CreateSpec) {
 	var (
-		_node = &ASU_Watched_Class{config: awcc.config}
-		_spec = sqlgraph.NewCreateSpec(asu_watched_class.Table, sqlgraph.NewFieldSpec(asu_watched_class.FieldID, field.TypeInt))
+		_node = &ASUWatchedClass{config: awcc.config}
+		_spec = sqlgraph.NewCreateSpec(asuwatchedclass.Table, sqlgraph.NewFieldSpec(asuwatchedclass.FieldID, field.TypeInt))
 	)
 	if id, ok := awcc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := awcc.mutation.UserID(); ok {
+		_spec.SetField(asuwatchedclass.FieldUserID, field.TypeString, value)
+		_node.UserID = value
+	}
 	if value, ok := awcc.mutation.Title(); ok {
-		_spec.SetField(asu_watched_class.FieldTitle, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldTitle, field.TypeString, value)
 		_node.Title = value
 	}
 	if value, ok := awcc.mutation.Instructor(); ok {
-		_spec.SetField(asu_watched_class.FieldInstructor, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldInstructor, field.TypeString, value)
 		_node.Instructor = value
 	}
 	if value, ok := awcc.mutation.Subject(); ok {
-		_spec.SetField(asu_watched_class.FieldSubject, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldSubject, field.TypeString, value)
 		_node.Subject = value
 	}
 	if value, ok := awcc.mutation.SubjectNumber(); ok {
-		_spec.SetField(asu_watched_class.FieldSubjectNumber, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldSubjectNumber, field.TypeString, value)
 		_node.SubjectNumber = value
 	}
-	if value, ok := awcc.mutation.HasOpenSeats(); ok {
-		_spec.SetField(asu_watched_class.FieldHasOpenSeats, field.TypeBool, value)
-		_node.HasOpenSeats = value
-	}
 	if value, ok := awcc.mutation.TrackedAt(); ok {
-		_spec.SetField(asu_watched_class.FieldTrackedAt, field.TypeTime, value)
+		_spec.SetField(asuwatchedclass.FieldTrackedAt, field.TypeTime, value)
 		_node.TrackedAt = value
 	}
 	if value, ok := awcc.mutation.ClassNumber(); ok {
-		_spec.SetField(asu_watched_class.FieldClassNumber, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldClassNumber, field.TypeString, value)
 		_node.ClassNumber = value
 	}
 	if value, ok := awcc.mutation.Term(); ok {
-		_spec.SetField(asu_watched_class.FieldTerm, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldTerm, field.TypeString, value)
 		_node.Term = value
 	}
 	return _node, _spec
 }
 
-// ASUWatchedClassCreateBulk is the builder for creating many ASU_Watched_Class entities in bulk.
+// ASUWatchedClassCreateBulk is the builder for creating many ASUWatchedClass entities in bulk.
 type ASUWatchedClassCreateBulk struct {
 	config
 	builders []*ASUWatchedClassCreate
 }
 
-// Save creates the ASU_Watched_Class entities in the database.
-func (awccb *ASUWatchedClassCreateBulk) Save(ctx context.Context) ([]*ASU_Watched_Class, error) {
+// Save creates the ASUWatchedClass entities in the database.
+func (awccb *ASUWatchedClassCreateBulk) Save(ctx context.Context) ([]*ASUWatchedClass, error) {
 	specs := make([]*sqlgraph.CreateSpec, len(awccb.builders))
-	nodes := make([]*ASU_Watched_Class, len(awccb.builders))
+	nodes := make([]*ASUWatchedClass, len(awccb.builders))
 	mutators := make([]Mutator, len(awccb.builders))
 	for i := range awccb.builders {
 		func(i int, root context.Context) {
 			builder := awccb.builders[i]
-			builder.defaults()
 			var mut Mutator = MutateFunc(func(ctx context.Context, m Mutation) (Value, error) {
 				mutation, ok := m.(*ASUWatchedClassMutation)
 				if !ok {
@@ -291,7 +266,7 @@ func (awccb *ASUWatchedClassCreateBulk) Save(ctx context.Context) ([]*ASU_Watche
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (awccb *ASUWatchedClassCreateBulk) SaveX(ctx context.Context) []*ASU_Watched_Class {
+func (awccb *ASUWatchedClassCreateBulk) SaveX(ctx context.Context) []*ASUWatchedClass {
 	v, err := awccb.Save(ctx)
 	if err != nil {
 		panic(err)

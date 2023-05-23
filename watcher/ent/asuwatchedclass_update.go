@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 	"attendr/watcher/ent/predicate"
 	"context"
 	"errors"
@@ -15,7 +15,7 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// ASUWatchedClassUpdate is the builder for updating ASU_Watched_Class entities.
+// ASUWatchedClassUpdate is the builder for updating ASUWatchedClass entities.
 type ASUWatchedClassUpdate struct {
 	config
 	hooks    []Hook
@@ -23,8 +23,14 @@ type ASUWatchedClassUpdate struct {
 }
 
 // Where appends a list predicates to the ASUWatchedClassUpdate builder.
-func (awcu *ASUWatchedClassUpdate) Where(ps ...predicate.ASU_Watched_Class) *ASUWatchedClassUpdate {
+func (awcu *ASUWatchedClassUpdate) Where(ps ...predicate.ASUWatchedClass) *ASUWatchedClassUpdate {
 	awcu.mutation.Where(ps...)
+	return awcu
+}
+
+// SetUserID sets the "user_id" field.
+func (awcu *ASUWatchedClassUpdate) SetUserID(s string) *ASUWatchedClassUpdate {
+	awcu.mutation.SetUserID(s)
 	return awcu
 }
 
@@ -52,20 +58,6 @@ func (awcu *ASUWatchedClassUpdate) SetSubjectNumber(s string) *ASUWatchedClassUp
 	return awcu
 }
 
-// SetHasOpenSeats sets the "has_open_seats" field.
-func (awcu *ASUWatchedClassUpdate) SetHasOpenSeats(b bool) *ASUWatchedClassUpdate {
-	awcu.mutation.SetHasOpenSeats(b)
-	return awcu
-}
-
-// SetNillableHasOpenSeats sets the "has_open_seats" field if the given value is not nil.
-func (awcu *ASUWatchedClassUpdate) SetNillableHasOpenSeats(b *bool) *ASUWatchedClassUpdate {
-	if b != nil {
-		awcu.SetHasOpenSeats(*b)
-	}
-	return awcu
-}
-
 // SetTrackedAt sets the "tracked_at" field.
 func (awcu *ASUWatchedClassUpdate) SetTrackedAt(t time.Time) *ASUWatchedClassUpdate {
 	awcu.mutation.SetTrackedAt(t)
@@ -77,6 +69,12 @@ func (awcu *ASUWatchedClassUpdate) SetNillableTrackedAt(t *time.Time) *ASUWatche
 	if t != nil {
 		awcu.SetTrackedAt(*t)
 	}
+	return awcu
+}
+
+// ClearTrackedAt clears the value of the "tracked_at" field.
+func (awcu *ASUWatchedClassUpdate) ClearTrackedAt() *ASUWatchedClassUpdate {
+	awcu.mutation.ClearTrackedAt()
 	return awcu
 }
 
@@ -125,7 +123,7 @@ func (awcu *ASUWatchedClassUpdate) ExecX(ctx context.Context) {
 }
 
 func (awcu *ASUWatchedClassUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(asu_watched_class.Table, asu_watched_class.Columns, sqlgraph.NewFieldSpec(asu_watched_class.FieldID, field.TypeInt))
+	_spec := sqlgraph.NewUpdateSpec(asuwatchedclass.Table, asuwatchedclass.Columns, sqlgraph.NewFieldSpec(asuwatchedclass.FieldID, field.TypeInt))
 	if ps := awcu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -133,33 +131,36 @@ func (awcu *ASUWatchedClassUpdate) sqlSave(ctx context.Context) (n int, err erro
 			}
 		}
 	}
+	if value, ok := awcu.mutation.UserID(); ok {
+		_spec.SetField(asuwatchedclass.FieldUserID, field.TypeString, value)
+	}
 	if value, ok := awcu.mutation.Title(); ok {
-		_spec.SetField(asu_watched_class.FieldTitle, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldTitle, field.TypeString, value)
 	}
 	if value, ok := awcu.mutation.Instructor(); ok {
-		_spec.SetField(asu_watched_class.FieldInstructor, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldInstructor, field.TypeString, value)
 	}
 	if value, ok := awcu.mutation.Subject(); ok {
-		_spec.SetField(asu_watched_class.FieldSubject, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldSubject, field.TypeString, value)
 	}
 	if value, ok := awcu.mutation.SubjectNumber(); ok {
-		_spec.SetField(asu_watched_class.FieldSubjectNumber, field.TypeString, value)
-	}
-	if value, ok := awcu.mutation.HasOpenSeats(); ok {
-		_spec.SetField(asu_watched_class.FieldHasOpenSeats, field.TypeBool, value)
+		_spec.SetField(asuwatchedclass.FieldSubjectNumber, field.TypeString, value)
 	}
 	if value, ok := awcu.mutation.TrackedAt(); ok {
-		_spec.SetField(asu_watched_class.FieldTrackedAt, field.TypeTime, value)
+		_spec.SetField(asuwatchedclass.FieldTrackedAt, field.TypeTime, value)
+	}
+	if awcu.mutation.TrackedAtCleared() {
+		_spec.ClearField(asuwatchedclass.FieldTrackedAt, field.TypeTime)
 	}
 	if value, ok := awcu.mutation.ClassNumber(); ok {
-		_spec.SetField(asu_watched_class.FieldClassNumber, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldClassNumber, field.TypeString, value)
 	}
 	if value, ok := awcu.mutation.Term(); ok {
-		_spec.SetField(asu_watched_class.FieldTerm, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldTerm, field.TypeString, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, awcu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{asu_watched_class.Label}
+			err = &NotFoundError{asuwatchedclass.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}
@@ -169,12 +170,18 @@ func (awcu *ASUWatchedClassUpdate) sqlSave(ctx context.Context) (n int, err erro
 	return n, nil
 }
 
-// ASUWatchedClassUpdateOne is the builder for updating a single ASU_Watched_Class entity.
+// ASUWatchedClassUpdateOne is the builder for updating a single ASUWatchedClass entity.
 type ASUWatchedClassUpdateOne struct {
 	config
 	fields   []string
 	hooks    []Hook
 	mutation *ASUWatchedClassMutation
+}
+
+// SetUserID sets the "user_id" field.
+func (awcuo *ASUWatchedClassUpdateOne) SetUserID(s string) *ASUWatchedClassUpdateOne {
+	awcuo.mutation.SetUserID(s)
+	return awcuo
 }
 
 // SetTitle sets the "title" field.
@@ -201,20 +208,6 @@ func (awcuo *ASUWatchedClassUpdateOne) SetSubjectNumber(s string) *ASUWatchedCla
 	return awcuo
 }
 
-// SetHasOpenSeats sets the "has_open_seats" field.
-func (awcuo *ASUWatchedClassUpdateOne) SetHasOpenSeats(b bool) *ASUWatchedClassUpdateOne {
-	awcuo.mutation.SetHasOpenSeats(b)
-	return awcuo
-}
-
-// SetNillableHasOpenSeats sets the "has_open_seats" field if the given value is not nil.
-func (awcuo *ASUWatchedClassUpdateOne) SetNillableHasOpenSeats(b *bool) *ASUWatchedClassUpdateOne {
-	if b != nil {
-		awcuo.SetHasOpenSeats(*b)
-	}
-	return awcuo
-}
-
 // SetTrackedAt sets the "tracked_at" field.
 func (awcuo *ASUWatchedClassUpdateOne) SetTrackedAt(t time.Time) *ASUWatchedClassUpdateOne {
 	awcuo.mutation.SetTrackedAt(t)
@@ -226,6 +219,12 @@ func (awcuo *ASUWatchedClassUpdateOne) SetNillableTrackedAt(t *time.Time) *ASUWa
 	if t != nil {
 		awcuo.SetTrackedAt(*t)
 	}
+	return awcuo
+}
+
+// ClearTrackedAt clears the value of the "tracked_at" field.
+func (awcuo *ASUWatchedClassUpdateOne) ClearTrackedAt() *ASUWatchedClassUpdateOne {
+	awcuo.mutation.ClearTrackedAt()
 	return awcuo
 }
 
@@ -247,7 +246,7 @@ func (awcuo *ASUWatchedClassUpdateOne) Mutation() *ASUWatchedClassMutation {
 }
 
 // Where appends a list predicates to the ASUWatchedClassUpdate builder.
-func (awcuo *ASUWatchedClassUpdateOne) Where(ps ...predicate.ASU_Watched_Class) *ASUWatchedClassUpdateOne {
+func (awcuo *ASUWatchedClassUpdateOne) Where(ps ...predicate.ASUWatchedClass) *ASUWatchedClassUpdateOne {
 	awcuo.mutation.Where(ps...)
 	return awcuo
 }
@@ -259,13 +258,13 @@ func (awcuo *ASUWatchedClassUpdateOne) Select(field string, fields ...string) *A
 	return awcuo
 }
 
-// Save executes the query and returns the updated ASU_Watched_Class entity.
-func (awcuo *ASUWatchedClassUpdateOne) Save(ctx context.Context) (*ASU_Watched_Class, error) {
+// Save executes the query and returns the updated ASUWatchedClass entity.
+func (awcuo *ASUWatchedClassUpdateOne) Save(ctx context.Context) (*ASUWatchedClass, error) {
 	return withHooks(ctx, awcuo.sqlSave, awcuo.mutation, awcuo.hooks)
 }
 
 // SaveX is like Save, but panics if an error occurs.
-func (awcuo *ASUWatchedClassUpdateOne) SaveX(ctx context.Context) *ASU_Watched_Class {
+func (awcuo *ASUWatchedClassUpdateOne) SaveX(ctx context.Context) *ASUWatchedClass {
 	node, err := awcuo.Save(ctx)
 	if err != nil {
 		panic(err)
@@ -286,21 +285,21 @@ func (awcuo *ASUWatchedClassUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-func (awcuo *ASUWatchedClassUpdateOne) sqlSave(ctx context.Context) (_node *ASU_Watched_Class, err error) {
-	_spec := sqlgraph.NewUpdateSpec(asu_watched_class.Table, asu_watched_class.Columns, sqlgraph.NewFieldSpec(asu_watched_class.FieldID, field.TypeInt))
+func (awcuo *ASUWatchedClassUpdateOne) sqlSave(ctx context.Context) (_node *ASUWatchedClass, err error) {
+	_spec := sqlgraph.NewUpdateSpec(asuwatchedclass.Table, asuwatchedclass.Columns, sqlgraph.NewFieldSpec(asuwatchedclass.FieldID, field.TypeInt))
 	id, ok := awcuo.mutation.ID()
 	if !ok {
-		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ASU_Watched_Class.id" for update`)}
+		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ASUWatchedClass.id" for update`)}
 	}
 	_spec.Node.ID.Value = id
 	if fields := awcuo.fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, asu_watched_class.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, asuwatchedclass.FieldID)
 		for _, f := range fields {
-			if !asu_watched_class.ValidColumn(f) {
+			if !asuwatchedclass.ValidColumn(f) {
 				return nil, &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 			}
-			if f != asu_watched_class.FieldID {
+			if f != asuwatchedclass.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, f)
 			}
 		}
@@ -312,36 +311,39 @@ func (awcuo *ASUWatchedClassUpdateOne) sqlSave(ctx context.Context) (_node *ASU_
 			}
 		}
 	}
+	if value, ok := awcuo.mutation.UserID(); ok {
+		_spec.SetField(asuwatchedclass.FieldUserID, field.TypeString, value)
+	}
 	if value, ok := awcuo.mutation.Title(); ok {
-		_spec.SetField(asu_watched_class.FieldTitle, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldTitle, field.TypeString, value)
 	}
 	if value, ok := awcuo.mutation.Instructor(); ok {
-		_spec.SetField(asu_watched_class.FieldInstructor, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldInstructor, field.TypeString, value)
 	}
 	if value, ok := awcuo.mutation.Subject(); ok {
-		_spec.SetField(asu_watched_class.FieldSubject, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldSubject, field.TypeString, value)
 	}
 	if value, ok := awcuo.mutation.SubjectNumber(); ok {
-		_spec.SetField(asu_watched_class.FieldSubjectNumber, field.TypeString, value)
-	}
-	if value, ok := awcuo.mutation.HasOpenSeats(); ok {
-		_spec.SetField(asu_watched_class.FieldHasOpenSeats, field.TypeBool, value)
+		_spec.SetField(asuwatchedclass.FieldSubjectNumber, field.TypeString, value)
 	}
 	if value, ok := awcuo.mutation.TrackedAt(); ok {
-		_spec.SetField(asu_watched_class.FieldTrackedAt, field.TypeTime, value)
+		_spec.SetField(asuwatchedclass.FieldTrackedAt, field.TypeTime, value)
+	}
+	if awcuo.mutation.TrackedAtCleared() {
+		_spec.ClearField(asuwatchedclass.FieldTrackedAt, field.TypeTime)
 	}
 	if value, ok := awcuo.mutation.ClassNumber(); ok {
-		_spec.SetField(asu_watched_class.FieldClassNumber, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldClassNumber, field.TypeString, value)
 	}
 	if value, ok := awcuo.mutation.Term(); ok {
-		_spec.SetField(asu_watched_class.FieldTerm, field.TypeString, value)
+		_spec.SetField(asuwatchedclass.FieldTerm, field.TypeString, value)
 	}
-	_node = &ASU_Watched_Class{config: awcuo.config}
+	_node = &ASUWatchedClass{config: awcuo.config}
 	_spec.Assign = _node.assignValues
 	_spec.ScanValues = _node.scanValues
 	if err = sqlgraph.UpdateNode(ctx, awcuo.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
-			err = &NotFoundError{asu_watched_class.Label}
+			err = &NotFoundError{asuwatchedclass.Label}
 		} else if sqlgraph.IsConstraintError(err) {
 			err = &ConstraintError{msg: err.Error(), wrap: err}
 		}

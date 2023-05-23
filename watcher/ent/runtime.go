@@ -2,24 +2,8 @@
 
 package ent
 
-import (
-	"attendr/watcher/ent/asu_watched_class"
-	"attendr/watcher/ent/schema"
-	"time"
-)
-
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	asu_watched_classFields := schema.ASU_Watched_Class{}.Fields()
-	_ = asu_watched_classFields
-	// asu_watched_classDescHasOpenSeats is the schema descriptor for has_open_seats field.
-	asu_watched_classDescHasOpenSeats := asu_watched_classFields[5].Descriptor()
-	// asu_watched_class.DefaultHasOpenSeats holds the default value on creation for the has_open_seats field.
-	asu_watched_class.DefaultHasOpenSeats = asu_watched_classDescHasOpenSeats.Default.(bool)
-	// asu_watched_classDescTrackedAt is the schema descriptor for tracked_at field.
-	asu_watched_classDescTrackedAt := asu_watched_classFields[6].Descriptor()
-	// asu_watched_class.DefaultTrackedAt holds the default value on creation for the tracked_at field.
-	asu_watched_class.DefaultTrackedAt = asu_watched_classDescTrackedAt.Default.(func() time.Time)
 }

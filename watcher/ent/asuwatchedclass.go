@@ -3,7 +3,7 @@
 package ent
 
 import (
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 	"fmt"
 	"strings"
 	"time"
@@ -12,11 +12,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ASU_Watched_Class is the model entity for the ASU_Watched_Class schema.
-type ASU_Watched_Class struct {
+// ASUWatchedClass is the model entity for the ASUWatchedClass schema.
+type ASUWatchedClass struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
+	// UserID holds the value of the "user_id" field.
+	UserID string `json:"user_id,omitempty"`
 	// Title holds the value of the "title" field.
 	Title string `json:"title,omitempty"`
 	// Instructor holds the value of the "instructor" field.
@@ -25,8 +27,6 @@ type ASU_Watched_Class struct {
 	Subject string `json:"subject,omitempty"`
 	// SubjectNumber holds the value of the "subject_number" field.
 	SubjectNumber string `json:"subject_number,omitempty"`
-	// HasOpenSeats holds the value of the "has_open_seats" field.
-	HasOpenSeats bool `json:"has_open_seats,omitempty"`
 	// TrackedAt holds the value of the "tracked_at" field.
 	TrackedAt time.Time `json:"tracked_at,omitempty"`
 	// ClassNumber holds the value of the "class_number" field.
@@ -37,17 +37,15 @@ type ASU_Watched_Class struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*ASU_Watched_Class) scanValues(columns []string) ([]any, error) {
+func (*ASUWatchedClass) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case asu_watched_class.FieldHasOpenSeats:
-			values[i] = new(sql.NullBool)
-		case asu_watched_class.FieldID:
+		case asuwatchedclass.FieldID:
 			values[i] = new(sql.NullInt64)
-		case asu_watched_class.FieldTitle, asu_watched_class.FieldInstructor, asu_watched_class.FieldSubject, asu_watched_class.FieldSubjectNumber, asu_watched_class.FieldClassNumber, asu_watched_class.FieldTerm:
+		case asuwatchedclass.FieldUserID, asuwatchedclass.FieldTitle, asuwatchedclass.FieldInstructor, asuwatchedclass.FieldSubject, asuwatchedclass.FieldSubjectNumber, asuwatchedclass.FieldClassNumber, asuwatchedclass.FieldTerm:
 			values[i] = new(sql.NullString)
-		case asu_watched_class.FieldTrackedAt:
+		case asuwatchedclass.FieldTrackedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -57,62 +55,62 @@ func (*ASU_Watched_Class) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the ASU_Watched_Class fields.
-func (awc *ASU_Watched_Class) assignValues(columns []string, values []any) error {
+// to the ASUWatchedClass fields.
+func (awc *ASUWatchedClass) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case asu_watched_class.FieldID:
+		case asuwatchedclass.FieldID:
 			value, ok := values[i].(*sql.NullInt64)
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			awc.ID = int(value.Int64)
-		case asu_watched_class.FieldTitle:
+		case asuwatchedclass.FieldUserID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				awc.UserID = value.String
+			}
+		case asuwatchedclass.FieldTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field title", values[i])
 			} else if value.Valid {
 				awc.Title = value.String
 			}
-		case asu_watched_class.FieldInstructor:
+		case asuwatchedclass.FieldInstructor:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field instructor", values[i])
 			} else if value.Valid {
 				awc.Instructor = value.String
 			}
-		case asu_watched_class.FieldSubject:
+		case asuwatchedclass.FieldSubject:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field subject", values[i])
 			} else if value.Valid {
 				awc.Subject = value.String
 			}
-		case asu_watched_class.FieldSubjectNumber:
+		case asuwatchedclass.FieldSubjectNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field subject_number", values[i])
 			} else if value.Valid {
 				awc.SubjectNumber = value.String
 			}
-		case asu_watched_class.FieldHasOpenSeats:
-			if value, ok := values[i].(*sql.NullBool); !ok {
-				return fmt.Errorf("unexpected type %T for field has_open_seats", values[i])
-			} else if value.Valid {
-				awc.HasOpenSeats = value.Bool
-			}
-		case asu_watched_class.FieldTrackedAt:
+		case asuwatchedclass.FieldTrackedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field tracked_at", values[i])
 			} else if value.Valid {
 				awc.TrackedAt = value.Time
 			}
-		case asu_watched_class.FieldClassNumber:
+		case asuwatchedclass.FieldClassNumber:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field class_number", values[i])
 			} else if value.Valid {
 				awc.ClassNumber = value.String
 			}
-		case asu_watched_class.FieldTerm:
+		case asuwatchedclass.FieldTerm:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field term", values[i])
 			} else if value.Valid {
@@ -125,35 +123,38 @@ func (awc *ASU_Watched_Class) assignValues(columns []string, values []any) error
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the ASU_Watched_Class.
+// Value returns the ent.Value that was dynamically selected and assigned to the ASUWatchedClass.
 // This includes values selected through modifiers, order, etc.
-func (awc *ASU_Watched_Class) Value(name string) (ent.Value, error) {
+func (awc *ASUWatchedClass) Value(name string) (ent.Value, error) {
 	return awc.selectValues.Get(name)
 }
 
-// Update returns a builder for updating this ASU_Watched_Class.
-// Note that you need to call ASU_Watched_Class.Unwrap() before calling this method if this ASU_Watched_Class
+// Update returns a builder for updating this ASUWatchedClass.
+// Note that you need to call ASUWatchedClass.Unwrap() before calling this method if this ASUWatchedClass
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (awc *ASU_Watched_Class) Update() *ASUWatchedClassUpdateOne {
+func (awc *ASUWatchedClass) Update() *ASUWatchedClassUpdateOne {
 	return NewASUWatchedClassClient(awc.config).UpdateOne(awc)
 }
 
-// Unwrap unwraps the ASU_Watched_Class entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the ASUWatchedClass entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (awc *ASU_Watched_Class) Unwrap() *ASU_Watched_Class {
+func (awc *ASUWatchedClass) Unwrap() *ASUWatchedClass {
 	_tx, ok := awc.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: ASU_Watched_Class is not a transactional entity")
+		panic("ent: ASUWatchedClass is not a transactional entity")
 	}
 	awc.config.driver = _tx.drv
 	return awc
 }
 
 // String implements the fmt.Stringer.
-func (awc *ASU_Watched_Class) String() string {
+func (awc *ASUWatchedClass) String() string {
 	var builder strings.Builder
-	builder.WriteString("ASU_Watched_Class(")
+	builder.WriteString("ASUWatchedClass(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", awc.ID))
+	builder.WriteString("user_id=")
+	builder.WriteString(awc.UserID)
+	builder.WriteString(", ")
 	builder.WriteString("title=")
 	builder.WriteString(awc.Title)
 	builder.WriteString(", ")
@@ -165,9 +166,6 @@ func (awc *ASU_Watched_Class) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("subject_number=")
 	builder.WriteString(awc.SubjectNumber)
-	builder.WriteString(", ")
-	builder.WriteString("has_open_seats=")
-	builder.WriteString(fmt.Sprintf("%v", awc.HasOpenSeats))
 	builder.WriteString(", ")
 	builder.WriteString("tracked_at=")
 	builder.WriteString(awc.TrackedAt.Format(time.ANSIC))
@@ -181,5 +179,5 @@ func (awc *ASU_Watched_Class) String() string {
 	return builder.String()
 }
 
-// ASU_Watched_Classes is a parsable slice of ASU_Watched_Class.
-type ASU_Watched_Classes []*ASU_Watched_Class
+// ASUWatchedClasses is a parsable slice of ASUWatchedClass.
+type ASUWatchedClasses []*ASUWatchedClass

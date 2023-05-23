@@ -10,7 +10,7 @@ import (
 
 	"attendr/watcher/ent/migrate"
 
-	"attendr/watcher/ent/asu_watched_class"
+	"attendr/watcher/ent/asuwatchedclass"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -22,8 +22,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// ASU_Watched_Class is the client for interacting with the ASU_Watched_Class builders.
-	ASU_Watched_Class *ASUWatchedClassClient
+	// ASUWatchedClass is the client for interacting with the ASUWatchedClass builders.
+	ASUWatchedClass *ASUWatchedClassClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -37,7 +37,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.ASU_Watched_Class = NewASUWatchedClassClient(c.config)
+	c.ASUWatchedClass = NewASUWatchedClassClient(c.config)
 }
 
 type (
@@ -118,9 +118,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:               ctx,
-		config:            cfg,
-		ASU_Watched_Class: NewASUWatchedClassClient(cfg),
+		ctx:             ctx,
+		config:          cfg,
+		ASUWatchedClass: NewASUWatchedClassClient(cfg),
 	}, nil
 }
 
@@ -138,16 +138,16 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:               ctx,
-		config:            cfg,
-		ASU_Watched_Class: NewASUWatchedClassClient(cfg),
+		ctx:             ctx,
+		config:          cfg,
+		ASUWatchedClass: NewASUWatchedClassClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		ASU_Watched_Class.
+//		ASUWatchedClass.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -169,96 +169,96 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.ASU_Watched_Class.Use(hooks...)
+	c.ASUWatchedClass.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.ASU_Watched_Class.Intercept(interceptors...)
+	c.ASUWatchedClass.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *ASUWatchedClassMutation:
-		return c.ASU_Watched_Class.mutate(ctx, m)
+		return c.ASUWatchedClass.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
 }
 
-// ASUWatchedClassClient is a client for the ASU_Watched_Class schema.
+// ASUWatchedClassClient is a client for the ASUWatchedClass schema.
 type ASUWatchedClassClient struct {
 	config
 }
 
-// NewASUWatchedClassClient returns a client for the ASU_Watched_Class from the given config.
+// NewASUWatchedClassClient returns a client for the ASUWatchedClass from the given config.
 func NewASUWatchedClassClient(c config) *ASUWatchedClassClient {
 	return &ASUWatchedClassClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `asu_watched_class.Hooks(f(g(h())))`.
+// A call to `Use(f, g, h)` equals to `asuwatchedclass.Hooks(f(g(h())))`.
 func (c *ASUWatchedClassClient) Use(hooks ...Hook) {
-	c.hooks.ASU_Watched_Class = append(c.hooks.ASU_Watched_Class, hooks...)
+	c.hooks.ASUWatchedClass = append(c.hooks.ASUWatchedClass, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `asu_watched_class.Intercept(f(g(h())))`.
+// A call to `Intercept(f, g, h)` equals to `asuwatchedclass.Intercept(f(g(h())))`.
 func (c *ASUWatchedClassClient) Intercept(interceptors ...Interceptor) {
-	c.inters.ASU_Watched_Class = append(c.inters.ASU_Watched_Class, interceptors...)
+	c.inters.ASUWatchedClass = append(c.inters.ASUWatchedClass, interceptors...)
 }
 
-// Create returns a builder for creating a ASU_Watched_Class entity.
+// Create returns a builder for creating a ASUWatchedClass entity.
 func (c *ASUWatchedClassClient) Create() *ASUWatchedClassCreate {
 	mutation := newASUWatchedClassMutation(c.config, OpCreate)
 	return &ASUWatchedClassCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of ASU_Watched_Class entities.
+// CreateBulk returns a builder for creating a bulk of ASUWatchedClass entities.
 func (c *ASUWatchedClassClient) CreateBulk(builders ...*ASUWatchedClassCreate) *ASUWatchedClassCreateBulk {
 	return &ASUWatchedClassCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for ASU_Watched_Class.
+// Update returns an update builder for ASUWatchedClass.
 func (c *ASUWatchedClassClient) Update() *ASUWatchedClassUpdate {
 	mutation := newASUWatchedClassMutation(c.config, OpUpdate)
 	return &ASUWatchedClassUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *ASUWatchedClassClient) UpdateOne(awc *ASU_Watched_Class) *ASUWatchedClassUpdateOne {
-	mutation := newASUWatchedClassMutation(c.config, OpUpdateOne, withASU_Watched_Class(awc))
+func (c *ASUWatchedClassClient) UpdateOne(awc *ASUWatchedClass) *ASUWatchedClassUpdateOne {
+	mutation := newASUWatchedClassMutation(c.config, OpUpdateOne, withASUWatchedClass(awc))
 	return &ASUWatchedClassUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
 func (c *ASUWatchedClassClient) UpdateOneID(id int) *ASUWatchedClassUpdateOne {
-	mutation := newASUWatchedClassMutation(c.config, OpUpdateOne, withASU_Watched_ClassID(id))
+	mutation := newASUWatchedClassMutation(c.config, OpUpdateOne, withASUWatchedClassID(id))
 	return &ASUWatchedClassUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for ASU_Watched_Class.
+// Delete returns a delete builder for ASUWatchedClass.
 func (c *ASUWatchedClassClient) Delete() *ASUWatchedClassDelete {
 	mutation := newASUWatchedClassMutation(c.config, OpDelete)
 	return &ASUWatchedClassDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *ASUWatchedClassClient) DeleteOne(awc *ASU_Watched_Class) *ASUWatchedClassDeleteOne {
+func (c *ASUWatchedClassClient) DeleteOne(awc *ASUWatchedClass) *ASUWatchedClassDeleteOne {
 	return c.DeleteOneID(awc.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
 func (c *ASUWatchedClassClient) DeleteOneID(id int) *ASUWatchedClassDeleteOne {
-	builder := c.Delete().Where(asu_watched_class.ID(id))
+	builder := c.Delete().Where(asuwatchedclass.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
 	return &ASUWatchedClassDeleteOne{builder}
 }
 
-// Query returns a query builder for ASU_Watched_Class.
+// Query returns a query builder for ASUWatchedClass.
 func (c *ASUWatchedClassClient) Query() *ASUWatchedClassQuery {
 	return &ASUWatchedClassQuery{
 		config: c.config,
@@ -267,13 +267,13 @@ func (c *ASUWatchedClassClient) Query() *ASUWatchedClassQuery {
 	}
 }
 
-// Get returns a ASU_Watched_Class entity by its id.
-func (c *ASUWatchedClassClient) Get(ctx context.Context, id int) (*ASU_Watched_Class, error) {
-	return c.Query().Where(asu_watched_class.ID(id)).Only(ctx)
+// Get returns a ASUWatchedClass entity by its id.
+func (c *ASUWatchedClassClient) Get(ctx context.Context, id int) (*ASUWatchedClass, error) {
+	return c.Query().Where(asuwatchedclass.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ASUWatchedClassClient) GetX(ctx context.Context, id int) *ASU_Watched_Class {
+func (c *ASUWatchedClassClient) GetX(ctx context.Context, id int) *ASUWatchedClass {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -283,12 +283,12 @@ func (c *ASUWatchedClassClient) GetX(ctx context.Context, id int) *ASU_Watched_C
 
 // Hooks returns the client hooks.
 func (c *ASUWatchedClassClient) Hooks() []Hook {
-	return c.hooks.ASU_Watched_Class
+	return c.hooks.ASUWatchedClass
 }
 
 // Interceptors returns the client interceptors.
 func (c *ASUWatchedClassClient) Interceptors() []Interceptor {
-	return c.inters.ASU_Watched_Class
+	return c.inters.ASUWatchedClass
 }
 
 func (c *ASUWatchedClassClient) mutate(ctx context.Context, m *ASUWatchedClassMutation) (Value, error) {
@@ -302,16 +302,16 @@ func (c *ASUWatchedClassClient) mutate(ctx context.Context, m *ASUWatchedClassMu
 	case OpDelete, OpDeleteOne:
 		return (&ASUWatchedClassDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown ASU_Watched_Class mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown ASUWatchedClass mutation op: %q", m.Op())
 	}
 }
 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		ASU_Watched_Class []ent.Hook
+		ASUWatchedClass []ent.Hook
 	}
 	inters struct {
-		ASU_Watched_Class []ent.Interceptor
+		ASUWatchedClass []ent.Interceptor
 	}
 )
