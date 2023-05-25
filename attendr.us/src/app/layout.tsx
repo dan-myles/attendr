@@ -21,7 +21,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <div className={styles.navbar}>
+          <div className="flex justify-between">
             <div>
               <a href="/">
                 <Image

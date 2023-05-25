@@ -1,7 +1,7 @@
 .userButtons {
   justify-content: space-between;
   display: flex;
-  margin-top: -55px;
+  margin-top: -20px;
   padding-right: 0.5%;
   align-items: center;
 }

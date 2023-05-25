@@ -9,7 +9,6 @@
 .getStartedButton {
   position: relative;
   appearance: none;
-  margin-top: -65px;
   background-color: transparent;
   border: 2px solid #1A1A1A;
   border-radius: 15px;

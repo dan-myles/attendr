@@ -40,16 +40,23 @@ const TopButtons: FC = () => {
             </div>
           )}
           <div className={styles.userButton}>
-            <UserButton
-              appearance={{
-                elements: {
-                  userButtonAvatarBox: {
-                    width: 56,
-                    height: 56,
+            <div
+              className="
+              transition ease-in-out hover:-translate-y-1 hover:shadow-2xl
+              active:translate-y-0 active:shadow-none
+              "
+            >
+              <UserButton
+                appearance={{
+                  elements: {
+                    userButtonAvatarBox: {
+                      width: 56,
+                      height: 56,
+                    },
                   },
-                },
-              }}
-            />
+                }}
+              />
+            </div>
           </div>
         </div>
       )}

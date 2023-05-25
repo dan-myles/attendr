@@ -4,7 +4,7 @@
 // - Fix the DELETE route to:
 //    First delete the users notification preferences
 //    If it was the last user tracking the class then delete it from the DB
-// Currently it just deletes the class from the DB and will affect all users
+//    Currently it just deletes the class from the DB and will affect all users
 // - Add Clerk authentication to all routes
 
 package api

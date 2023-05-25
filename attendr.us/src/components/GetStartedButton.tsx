@@ -11,7 +11,7 @@ const GetStartedButton: FC = () => {
     <div>
       {!isSignedIn && (
         <div className={styles.getStartedSection}>
-          <SignUpButton mode="modal">
+          <SignUpButton mode="modal" redirectUrl="/dashboard">
             <button className={styles.getStartedButton}>try it out free</button>
           </SignUpButton>
         </div>

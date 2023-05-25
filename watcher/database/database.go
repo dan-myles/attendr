@@ -1,5 +1,6 @@
 // TODO:
-//  - Add email and phone number Class Tracking DB table
+//  - Add email and phone number Class Tracking DB table (not sure if needed)
+//      Clerk is handling phone numbers so prob not needed
 //  - Add functions to add & remove user notification preferences to DB
 //      In general track email and phone number to send notifications to
 //  - Refactor close and open connection to happen in every function
@@ -112,7 +113,7 @@ func AddClassToDb(ctx context.Context, class *asu.ApiResponse) (*ent.ASUWatchedC
 	addedClass, err := Client.ASUWatchedClass.
 		Create().
 		SetTitle(title).
-		SetUserID("DebugUserID"). // NOTE: GET RID OF THIS
+		SetUserID("DebugUserID"). // WARNING: GET RID OF THIS EVENTUALLY
 		SetInstructor(class.Classes[0].Clas.Instructorslist[0]).
 		SetSubject(class.Classes[0].Clas.Subject).
 		SetSubjectNumber(class.Classes[0].Clas.Catalognbr).
